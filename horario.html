@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Cronograma de Estudio - Pomodoro</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- Encabezado Principal -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-md shadow-red-200">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0a9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-bold text-xl tracking-tight">Estudio Eficiente</h1>
+          <p class="text-xs text-slate-500">Cronograma Pomodoro Automático</p>
+        </div>
+      </div>
+
+      <!-- Leyenda de Dificultad -->
+      <div class="flex flex-wrap justify-center items-center gap-3 text-xs font-semibold">
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 text-rose-700 border border-rose-100">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Difícil (4 Pom.)
+        </span>
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Intermedio (2 Pom.)
+        </span>
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Fácil (3 Pom.)
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Espacio de Trabajo Principal -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Columna 1: Widget del Temporizador Inteligente (Izquierda) -->
+    <section class="lg:col-span-4 flex flex-col gap-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm sticky top-24">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-semibold text-slate-500 uppercase tracking-wider text-xs">Temporizador Activo</h2>
+          <span id="timer-type" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">Ninguno</span>
+        </div>
+
+        <div class="text-center py-6 flex flex-col items-center">
+          <div id="current-subject" class="text-lg font-bold text-slate-900 mb-1 w-full">Selecciona una sesión</div>
+          <div id="current-block-info" class="text-xs text-slate-400 mb-4 w-full">Haz clic en cualquier curso del horario</div>
+          
+          <!-- Pantalla del Cronómetro -->
+          <div id="timer-display" class="text-6xl font-extrabold tracking-tight text-slate-900 font-mono mb-6">
+            25:00
+          </div>
+
+          <!-- Barra de Progreso Minimalista -->
+          <div class="relative w-full max-w-[200px] mx-auto mb-6 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div id="timer-progress" class="h-full bg-rose-500 transition-all duration-300 rounded-full" style="width: 100%"></div>
+          </div>
+
+          <!-- Interruptor de Auto-Avanzar -->
+          <div class="flex items-center justify-between w-full max-w-[240px] px-2 py-1.5 mb-4 rounded-lg bg-slate-50 border border-slate-100">
+            <span class="text-xs font-semibold text-slate-600">Siguiente bloque automático</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="toggle-auto-advance" checked class="sr-only peer">
+              <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-slate-900"></div>
+            </label>
+          </div>
+
+          <!-- Controles de Reproducción -->
+          <div class="flex flex-col items-center gap-4 w-full">
+            <div class="flex justify-center gap-3 w-full">
+              <button id="btn-start" class="flex-1 px-4 py-2.5 bg-slate-900 text-white rounded-xl font-medium text-sm hover:bg-slate-800 transition flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                </svg> Iniciar
+              </button>
+              <button id="btn-pause" disabled class="flex-1 px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl font-medium text-sm hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none transition flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+                </svg> Pausar
+              </button>
+              <button id="btn-reset" class="p-2.5 bg-slate-50 text-slate-500 hover:text-slate-700 rounded-xl border border-slate-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Botones de Prueba de Sonido Diferenciados -->
+            <div class="flex flex-col gap-2 w-full">
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Probar Sonidos de Alarma</span>
+              <div class="flex gap-2 w-full">
+                <button id="btn-test-study" class="flex-1 text-[11px] text-rose-700 hover:text-rose-900 font-bold transition flex items-center justify-center gap-1.5 py-2.5 px-1 rounded-lg border border-rose-100 bg-rose-50 hover:bg-rose-100">
+                  🔔 Test: Ir a Descanso
+                </button>
+                <button id="btn-test-rest" class="flex-1 text-[11px] text-emerald-700 hover:text-emerald-900 font-bold transition flex items-center justify-center gap-1.5 py-2.5 px-1 rounded-lg border border-emerald-100 bg-emerald-50 hover:bg-emerald-100">
+                  🚨 Test: Ir a Estudiar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-100 pt-4 mt-2">
+          <p class="text-xs text-slate-500 text-center leading-relaxed">
+            💡 <strong>Modo Automático Activo:</strong> Al finalizar un bloque, se marcará tu progreso y pasará al siguiente automáticamente.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Columna 2: Horario Interactivo (Derecha) -->
+    <section class="lg:col-span-8 flex flex-col gap-6">
+
+      <!-- Pestañas de Navegación de Días -->
+      <div class="flex bg-white p-1 rounded-xl border border-slate-200 overflow-x-auto custom-scrollbar shadow-sm">
+        <button onclick="switchTab('lunes')" class="tab-btn flex-1 min-w-[80px] py-2 px-3 text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900 active-tab bg-slate-900 text-white" id="tab-lunes">Lunes</button>
+        <button onclick="switchTab('martes')" class="tab-btn flex-1 min-w-[80px] py-2 px-3 text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900" id="tab-martes">Martes</button>
+        <button onclick="switchTab('miercoles')" class="tab-btn flex-1 min-w-[80px] py-2 px-3 text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900" id="tab-miercoles">Miércoles</button>
+        <button onclick="switchTab('jueves')" class="tab-btn flex-1 min-w-[80px] py-2 px-3 text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900" id="tab-jueves">Jueves</button>
+        <button onclick="switchTab('viernes')" class="tab-btn flex-1 min-w-[80px] py-2 px-3 text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900" id="tab-viernes">Viernes</button>
+        <button onclick="switchTab('sabado')" class="tab-btn flex-1 min-w-[80px] py-2 px-3 text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900" id="tab-sabado">Sábado</button>
+      </div>
+
+      <!-- Contenedor del Día Actual -->
+      <div id="days-wrapper" class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm min-h-[500px]">
+        
+        <!-- Cabecera del Día -->
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+          <div>
+            <h3 id="day-title" class="text-xl font-bold text-slate-900 capitalize">Lunes</h3>
+            <p class="text-xs text-slate-500">Bloques de estudio, descansos y cena fijos calculados al minuto</p>
+          </div>
+          <button onclick="resetDayCheckboxes()" class="text-xs text-slate-500 hover:text-slate-800 transition flex items-center gap-1.5 font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg> Reiniciar checks del día
+          </button>
+        </div>
+
+        <!-- Línea de Tiempo de Tareas -->
+        <div id="timeline-list" class="space-y-4 relative before:absolute before:left-[17px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+          <!-- Se renderiza vía JS -->
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Banner de Notificación de Alarma -->
+  <div id="alarm-toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-4 rounded-xl shadow-2xl flex items-center gap-4 transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none max-w-sm">
+    <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0 text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 animate-bounce">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+      </svg>
+    </div>
+    <div>
+      <h4 class="font-bold text-sm">¡Tiempo Completado!</h4>
+      <p id="alarm-message" class="text-xs text-slate-300">Se guardó tu progreso y se avanzó de bloque.</p>
+    </div>
+    <button onclick="dismissToast()" class="text-slate-400 hover:text-white transition">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Pie de página -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>© 2026 Planificador de Estudio Personal • Precisión y Enfoque</p>
+    </div>
+  </footer>
+
+  <!-- Lógica en JS -->
+  <script>
+    // Base de datos de cronogramas diarios
+    const scheduleData = {
+      lunes: [
+        { type: "course", subject: "Aritmética", level: "hard", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1" },
+        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
+        { type: "course", subject: "Aritmética", level: "hard", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2" },
+        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
+        { type: "course", subject: "Aritmética", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3" },
+        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
+        { type: "course", subject: "Aritmética", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 4" },
+        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
+        { type: "course", subject: "Razonamiento Verbal", level: "medium", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 1 de 2" },
+        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
+        { type: "course", subject: "Razonamiento Verbal", level: "medium", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 2 de 2 (Continuación)" },
+        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
+        { type: "course", subject: "Economía", level: "easy", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 1 de 3" },
+        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
+        { type: "course", subject: "Economía", level: "easy", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 2 de 3" },
+        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
+        { type: "course", subject: "Economía", level: "easy", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 3 de 3" }
+      ],
+      martes: [
+        { type: "course", subject: "Geografía", level: "easy", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 3" },
+        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
+        { type: "course", subject: "Geografía", level: "easy", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 3" },
+        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
+        { type: "course", subject: "Geografía", level: "easy", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 3" },
+        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
+        { type: "course", subject: "Trigonometría", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 1 de 4" },
+        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
+        { type: "course", subject: "Trigonometría", level: "hard", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 2 de 4" },
+        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
+        { type: "course", subject: "Trigonometría", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 3 de 4 (Continuación)" },
+        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
+        { type: "course", subject: "Trigonometría", level: "hard", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 4 de 4 (Continuación)" },
+        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
+        { type: "course", subject: "Razonamiento Matemático", level: "medium", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 1 de 2" },
+        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
+        { type: "course", subject: "Razonamiento Matemático", level: "medium", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 2 de 2" }
+      ],
+      miercoles: [
+        { type: "course", subject: "Educación Cívica", level: "medium", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 2" },
+        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
+        { type: "course", subject: "Educación Cívica", level: "medium", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 2" },
+        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
+        { type: "course", subject: "Historia", level: "easy", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 1 de 3" },
+        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
+        { type: "course", subject: "Historia", level: "easy", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 2 de 3" },
+        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
+        { type: "course", subject: "Historia", level: "easy", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 3 de 3" },
+        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
+        { type: "course", subject: "Geometría", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 1 de 4" },
+        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
+        { type: "course", subject: "Geometría", level: "hard", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 2 de 4" },
+        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
+        { type: "course", subject: "Geometría", level: "hard", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 3 de 4" },
+        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
+        { type: "course", subject: "Geometría", level: "hard", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 4 de 4" }
+      ],
+      jueves: [
+        { type: "course", subject: "Errores del Simulacro", level: "hard", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1" },
+        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
+        { type: "course", subject: "Errores del Simulacro", level: "hard", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2" },
+        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
+        { type: "course", subject: "Errores del Simulacro", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3" },
+        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
+        { type: "course", subject: "Errores del Simulacro", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 4" },
+        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
+        { type: "course", subject: "Literatura", level: "medium", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 1 de 2" },
+        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
+        { type: "course", subject: "Literatura", level: "medium", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 2 de 2 (Continuación)" },
+        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
+        { type: "course", subject: "Química", level: "easy", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 1 de 3" },
+        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
+        { type: "course", subject: "Química", level: "easy", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 2 de 3" },
+        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
+        { type: "course", subject: "Química", level: "easy", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 3 de 3" }
+      ],
+      viernes: [
+        { type: "course", subject: "Física", level: "hard", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1" },
+        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
+        { type: "course", subject: "Física", level: "hard", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2" },
+        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
+        { type: "course", subject: "Física", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3" },
+        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
+        { type: "course", subject: "Física", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 4" },
+        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
+        { type: "course", subject: "Biología", level: "easy", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 1 de 3" },
+        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
+        { type: "course", subject: "Biología", level: "easy", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 2 de 3 (Continuación)" },
+        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
+        { type: "course", subject: "Biología", level: "easy", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 3 de 3 (Continuación)" },
+        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
+        { type: "course", subject: "Filosofía", level: "medium", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 1 de 2" },
+        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
+        { type: "course", subject: "Filosofía", level: "medium", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 2 de 2" }
+      ],
+      sabado: [
+        { type: "course", subject: "Lenguaje", level: "easy", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 3" },
+        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
+        { type: "course", subject: "Lenguaje", level: "easy", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 3" },
+        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
+        { type: "course", subject: "Lenguaje", level: "easy", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 3" },
+        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
+        { type: "course", subject: "Psicología", level: "medium", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 1 de 2" },
+        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
+        { type: "course", subject: "Psicología", level: "medium", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 2 de 2" },
+        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
+        { type: "course", subject: "Álgebra", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 1 de 4" },
+        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
+        { type: "course", subject: "Álgebra", level: "hard", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 2 de 4" },
+        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
+        { type: "course", subject: "Álgebra", level: "hard", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 3 de 4" },
+        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
+        { type: "course", subject: "Álgebra", level: "hard", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 4 de 4" }
+      ]
+    };
+
+    // Estado global de la aplicación
+    let currentDay = 'lunes';
+    let timerInterval = null;
+    let timerTimeRemaining = 1500; // 25 min por defecto
+    let timerTotalDuration = 1500;
+    let timerIsPaused = true;
+    let selectedTaskKey = null;
+    let currentTaskIndex = 0; // Guardamos el índice actual de la tarea
+
+    // Generador de audio nativo con sonidos altamente audibles y repetitivos
+    function playBeep(type) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let notes = [];
+        
+        if (type === 'course' || type === 'study') {
+          // ALARMA 1: Fin de estudio (Hora de descansar)
+          // Patrón de triple campana doble descendente tipo "Ding-Dong" (1.2 segundos de duración)
+          notes = [
+            // Primer Ding-Dong
+            { freq: 659.25, start: 0.0, duration: 0.15, oscType: 'sine' },  // E5 (Ding)
+            { freq: 523.25, start: 0.15, duration: 0.20, oscType: 'sine' }, // C5 (Dong)
+            
+            // Segundo Ding-Dong
+            { freq: 659.25, start: 0.45, duration: 0.15, oscType: 'sine' }, // E5 (Ding)
+            { freq: 523.25, start: 0.60, duration: 0.20, oscType: 'sine' }, // C5 (Dong)
+
+            // Tercer Ding-Dong
+            { freq: 659.25, start: 0.90, duration: 0.15, oscType: 'sine' }, // E5 (Ding)
+            { freq: 523.25, start: 1.05, duration: 0.25, oscType: 'sine' }  // C5 (Dong)
+          ];
+        } else {
+          // ALARMA 2 (EL MÁS FUERTE): Fin de descanso/cena (Hora de volver a estudiar)
+          // Patrón clásico de despertador digital: 4 ráfagas repetitivas de pitido doble rápido a 1000Hz (Muy molesto/llamativo)
+          notes = [
+            // Ráfaga 1 (Beep-Beep)
+            { freq: 1000.00, start: 0.0, duration: 0.08, oscType: 'triangle' },
+            { freq: 1000.00, start: 0.12, duration: 0.08, oscType: 'triangle' },
+            
+            // Ráfaga 2 (Beep-Beep)
+            { freq: 1000.00, start: 0.5, duration: 0.08, oscType: 'triangle' },
+            { freq: 1000.00, start: 0.62, duration: 0.08, oscType: 'triangle' },
+            
+            // Ráfaga 3 (Beep-Beep)
+            { freq: 1000.00, start: 1.0, duration: 0.08, oscType: 'triangle' },
+            { freq: 1000.00, start: 1.12, duration: 0.08, oscType: 'triangle' },
+
+            // Ráfaga 4 (Beep-Beep)
+            { freq: 1000.00, start: 1.5, duration: 0.08, oscType: 'triangle' },
+            { freq: 1000.00, start: 1.62, duration: 0.15, oscType: 'triangle' }
+          ];
+        }
+        
+        notes.forEach(note => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          
+          osc.type = note.oscType;
+          osc.frequency.setValueAtTime(note.freq, audioCtx.currentTime + note.start);
+          
+          // Subido ligeramente el volumen relativo (0.35) para garantizar que se escuche claro
+          gain.gain.setValueAtTime(0.35, audioCtx.currentTime + note.start);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + note.start + note.duration);
+          
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          
+          osc.start(audioCtx.currentTime + note.start);
+          osc.stop(audioCtx.currentTime + note.start + note.duration);
+        });
+      } catch (err) {
+        console.warn('Audio Web API no soportada o bloqueada.', err);
+      }
+    }
+
+    // Renderiza la lista de actividades para el día seleccionado
+    function renderTimeline(day) {
+      const listElement = document.getElementById('timeline-list');
+      listElement.innerHTML = '';
+      
+      const dayData = scheduleData[day];
+      
+      dayData.forEach((item, index) => {
+        const taskKey = `${day}-${index}`;
+        const isChecked = localStorage.getItem(taskKey) === 'true';
+        
+        const timelineItem = document.createElement('div');
+        timelineItem.className = "relative flex gap-4 pl-4 items-start transition-all";
+
+        if (item.type === 'course') {
+          let bgClass = "bg-rose-50 border-rose-100 text-rose-800 hover:bg-rose-100 hover:border-rose-200";
+          let badgeClass = "bg-rose-500";
+          
+          if (item.level === 'easy') {
+            bgClass = "bg-amber-50 border-amber-100 text-amber-800 hover:bg-amber-100 hover:border-amber-200";
+            badgeClass = "bg-amber-500";
+          } else if (item.level === 'medium') {
+            bgClass = "bg-emerald-50 border-emerald-100 text-emerald-800 hover:bg-emerald-100 hover:border-emerald-200";
+            badgeClass = "bg-emerald-500";
+          }
+
+          timelineItem.innerHTML = `
+            <div class="z-10 mt-1.5 flex-shrink-0 flex items-center justify-center">
+              <button onclick="toggleCheck('${taskKey}', event)" class="w-8 h-8 rounded-full border-2 ${isChecked ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 hover:border-slate-400 text-transparent'} flex items-center justify-center transition">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+              </button>
+            </div>
+            <div onclick="selectTask('${day}', ${index})" class="flex-1 border p-4 rounded-xl cursor-pointer shadow-sm transition ${bgClass} ${selectedTaskKey === taskKey ? 'ring-2 ring-slate-900 border-transparent shadow' : ''}">
+              <div class="flex justify-between items-start gap-2 mb-1">
+                <h4 class="font-bold text-base leading-tight">${item.subject}</h4>
+                <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${badgeClass} uppercase">${item.level === 'hard' ? 'Difícil' : item.level === 'medium' ? 'Intermedio' : 'Fácil'}</span>
+              </div>
+              <p class="text-xs opacity-75 font-medium mb-1">${item.detail}</p>
+              <div class="text-xs font-semibold flex items-center gap-1.5 opacity-90 mt-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0a9 9 0 0 1 18 0Z" />
+                </svg>
+                <span>${item.time}</span>
+              </div>
+            </div>
+          `;
+        } else if (item.type === 'dinner') {
+          timelineItem.className = "relative flex gap-4 pl-4 items-center";
+          timelineItem.innerHTML = `
+            <div class="z-10 w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              </svg>
+            </div>
+            <div onclick="selectTask('${day}', ${index})" class="flex-1 bg-orange-50/50 border border-orange-100 p-3 rounded-xl cursor-pointer text-orange-900 hover:bg-orange-50 transition flex justify-between items-center ${selectedTaskKey === taskKey ? 'ring-2 ring-orange-400 border-transparent' : ''}">
+              <div class="flex items-center gap-3">
+                <span class="font-bold text-sm">🍽️ CENA (Fijo)</span>
+              </div>
+              <span class="text-xs font-semibold">${item.time}</span>
+            </div>
+          `;
+        } else {
+          timelineItem.innerHTML = `
+            <div class="z-10 w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5v-1.5M12 18.75V10.5m-3 1.5L12 9l3 3M9 3.75h6m-12 15h18" />
+              </svg>
+            </div>
+            <div onclick="selectTask('${day}', ${index})" class="flex-1 border border-dashed border-slate-200 bg-slate-50/40 p-2.5 rounded-xl cursor-pointer text-slate-500 hover:bg-slate-50 transition flex justify-between items-center ${selectedTaskKey === taskKey ? 'ring-2 ring-slate-400 border-transparent' : ''}">
+              <span class="text-xs font-semibold">☕ Descanso corto</span>
+              <span class="text-xs font-semibold">${item.time}</span>
+            </div>
+          `;
+        }
+        
+        listElement.appendChild(timelineItem);
+      });
+    }
+
+    // Cambiar de pestaña (Día)
+    function switchTab(day) {
+      currentDay = day;
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-900', 'text-white');
+        btn.classList.add('text-slate-600');
+      });
+      
+      const activeBtn = document.getElementById(`tab-${day}`);
+      activeBtn.classList.remove('text-slate-600');
+      activeBtn.classList.add('bg-slate-900', 'text-white');
+      
+      document.getElementById('day-title').innerText = day;
+      
+      renderTimeline(day);
+      // Selecciona y carga el primer elemento del nuevo día
+      selectTask(day, 0);
+    }
+
+    // Guardar / Alternar casilla de verificación
+    function toggleCheck(key, event) {
+      if (event) event.stopPropagation();
+      const currentState = localStorage.getItem(key) === 'true';
+      localStorage.setItem(key, !currentState);
+      renderTimeline(currentDay);
+    }
+
+    // Reiniciar checks
+    function resetDayCheckboxes() {
+      const dayData = scheduleData[currentDay];
+      dayData.forEach((item, index) => {
+        localStorage.removeItem(`${currentDay}-${index}`);
+      });
+      renderTimeline(currentDay);
+    }
+
+    // Seleccionar y cargar tarea en el Temporizador
+    function selectTask(day, index) {
+      const item = scheduleData[day][index];
+      selectedTaskKey = `${day}-${index}`;
+      currentTaskIndex = index;
+      
+      renderTimeline(day);
+      
+      if (item.type === 'course') {
+        document.getElementById('current-subject').innerText = item.subject;
+        document.getElementById('current-block-info').innerText = `${item.detail} • ${item.time}`;
+        document.getElementById('timer-type').innerText = 'Estudio';
+        document.getElementById('timer-type').className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800';
+        setTimer(25); // 25 min Pomodoro de estudio
+      } else if (item.type === 'dinner') {
+        document.getElementById('current-subject').innerText = 'Hora de Cenar';
+        document.getElementById('current-block-info').innerText = `Tiempo para recargar energías • ${item.time}`;
+        document.getElementById('timer-type').innerText = 'Cena';
+        document.getElementById('timer-type').className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800';
+        setTimer(30); // 30 min cena
+      } else {
+        document.getElementById('current-subject').innerText = 'Descanso Corto';
+        document.getElementById('current-block-info').innerText = `Estírate y toma agua • ${item.time}`;
+        document.getElementById('timer-type').innerText = 'Descanso';
+        document.getElementById('timer-type').className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
+        setTimer(5); // 5 min descanso corto
+      }
+
+      document.getElementById('btn-start').disabled = false;
+      document.getElementById('btn-pause').disabled = true;
+    }
+
+    // Configura la duración del temporizador
+    function setTimer(minutes) {
+      clearInterval(timerInterval);
+      timerIsPaused = true;
+      timerTotalDuration = minutes * 60;
+      timerTimeRemaining = timerTotalDuration;
+      updateTimerDisplay();
+    }
+
+    // Actualiza los números del reloj
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerTimeRemaining / 60);
+      const secs = timerTimeRemaining % 60;
+      
+      const formattedMins = mins < 10 ? '0' + mins : mins;
+      const formattedSecs = secs < 10 ? '0' + secs : secs;
+      
+      document.getElementById('timer-display').innerText = `${formattedMins}:${formattedSecs}`;
+      
+      const percentage = (timerTimeRemaining / timerTotalDuration) * 100;
+      document.getElementById('timer-progress').style.width = `${percentage}%`;
+    }
+
+    // Iniciar temporizador
+    function startTimer() {
+      if (!timerIsPaused) return;
+      
+      timerIsPaused = false;
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-pause').disabled = false;
+      
+      timerInterval = setInterval(() => {
+        if (timerTimeRemaining > 0) {
+          timerTimeRemaining--;
+          updateTimerDisplay();
+        } else {
+          // Temporizador Terminado
+          clearInterval(timerInterval);
+          
+          // Obtener tipo de actividad completada para sonar su respectiva campana
+          const currentItem = scheduleData[currentDay][currentTaskIndex];
+          playBeep(currentItem.type);
+          showToast();
+          
+          // Marcar de manera automática el check si era un curso
+          if (currentItem.type === 'course') {
+            localStorage.setItem(selectedTaskKey, 'true');
+            renderTimeline(currentDay);
+          }
+          
+          document.getElementById('btn-start').disabled = false;
+          document.getElementById('btn-pause').disabled = true;
+          timerIsPaused = true;
+
+          // LÓGICA DE AUTO-AVANZAR AL SIGUIENTE BLOQUE
+          const autoAdvanceEnabled = document.getElementById('toggle-auto-advance').checked;
+          if (autoAdvanceEnabled) {
+            const nextIndex = currentTaskIndex + 1;
+            const dayData = scheduleData[currentDay];
+            
+            if (nextIndex < dayData.length) {
+              // Esperar 2 segundos para dar respiro al usuario y pasar al siguiente
+              setTimeout(() => {
+                selectTask(currentDay, nextIndex);
+                // Auto-iniciar la cuenta del siguiente bloque
+                startTimer();
+              }, 2000);
+            }
+          }
+        }
+      }, 1000);
+    }
+
+    // Pausar
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerIsPaused = true;
+      document.getElementById('btn-start').disabled = false;
+      document.getElementById('btn-pause').disabled = true;
+    }
+
+    // Reiniciar
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerIsPaused = true;
+      timerTimeRemaining = timerTotalDuration;
+      updateTimerDisplay();
+      
+      document.getElementById('btn-start').disabled = false;
+      document.getElementById('btn-pause').disabled = true;
+    }
+
+    // Lanzar alerta visual
+    function showToast() {
+      const type = document.getElementById('timer-type').innerText;
+      const subject = document.getElementById('current-subject').innerText;
+      
+      let message = `Has terminado tu bloque de ${subject}. ¡Excelente trabajo!`;
+      if (type === 'Descanso') {
+        message = 'El descanso ha terminado. ¡A concentrarse!';
+      } else if (type === 'Cena') {
+        message = '¡Hora de volver al estudio!';
+      }
+      
+      document.getElementById('alarm-message').innerText = message;
+      
+      const toast = document.getElementById('alarm-toast');
+      toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+      
+      setTimeout(dismissToast, 8000);
+    }
+
+    function dismissToast() {
+      const toast = document.getElementById('alarm-toast');
+      toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+    }
+
+    // Eventos
+    document.getElementById('btn-start').addEventListener('click', startTimer);
+    document.getElementById('btn-pause').addEventListener('click', pauseTimer);
+    document.getElementById('btn-reset').addEventListener('click', resetTimer);
+    
+    // Listeners para los botones de prueba diferenciados
+    document.getElementById('btn-test-study').addEventListener('click', () => playBeep('study'));
+    document.getElementById('btn-test-rest').addEventListener('click', () => playBeep('rest'));
+
+    // Carga inicial al abrir la página
+    window.onload = function() {
+      renderTimeline(currentDay);
+      selectTask(currentDay, 0); // Selecciona automáticamente la primera tarea del lunes (Aritmética)
+    };
+  </script>
+</body>
+</html>
