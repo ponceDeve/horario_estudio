@@ -419,11 +419,14 @@
         if (timerTimeRemaining > 0) {
           timerTimeRemaining--;
           updateTimerDisplay();
-        } else {
-          clearInterval(timerInterval);
-          startAlarmLoop(scheduleData[currentDay][currentTaskIndex].type);
-          showAlarmModal(scheduleData[currentDay][currentTaskIndex]);
-          timerIsPaused = true;
+          if (timerTimeRemaining === 0) {
+            clearInterval(timerInterval);
+            timerIsPaused = true;
+            document.getElementById('btn-start').disabled = false;
+            document.getElementById('btn-pause').disabled = true;
+            startAlarmLoop(scheduleData[currentDay][currentTaskIndex].type);
+            showAlarmModal(scheduleData[currentDay][currentTaskIndex]);
+          }
         }
       }, 1000);
     }
@@ -451,7 +454,9 @@
       stopAlarmLoop();
       document.getElementById('custom-alarm-modal').classList.add('opacity-0', 'pointer-events-none');
       if (currentTaskIndex + 1 < scheduleData[currentDay].length) {
-        selectTask(currentDay, ++currentTaskIndex);
+        currentTaskIndex++;
+        localStorage.setItem(`pomodoro_task_index_${currentDay}`, currentTaskIndex);
+        selectTask(currentDay, currentTaskIndex);
       }
     }
 
