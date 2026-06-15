@@ -156,6 +156,15 @@
     </div>
   </div>
 
+  <!-- MODAL DE ERROR DE DIA -->
+  <div id="day-error-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl text-center">
+      <h3 class="text-xl font-bold text-slate-900 mb-2">¡Ups!</h3>
+      <p class="text-slate-600 mb-6">Hoy no te toca estos cursos.</p>
+      <button onclick="document.getElementById('day-error-modal').classList.add('opacity-0', 'pointer-events-none')" class="w-full py-3 bg-slate-900 text-white font-bold rounded-xl">Entendido</button>
+    </div>
+  </div>
+
   <script>
     const scheduleData = {
       lunes: [
@@ -232,7 +241,7 @@
         { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
         { type: "course", subject: "Química", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 1 de 4" },
         { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
-        { type: "course", subject: "Química", level: "hard", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 2 de 4" },
+        { type: "course", subject: "Química", level: "7:00 PM - 7:25 PM", detail: "Pomodoro 2 de 4" },
         { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
         { type: "course", subject: "Química", level: "hard", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 3 de 4" },
         { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
@@ -393,6 +402,14 @@
     }
 
     function startTimer() {
+      // VALIDACIÓN DE DÍA
+      const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+      const hoy = dias[new Date().getDay()];
+      if (currentDay !== hoy) {
+          document.getElementById('day-error-modal').classList.remove('opacity-0', 'pointer-events-none');
+          return;
+      }
+
       if (!timerIsPaused) return;
       clearInterval(timerInterval);
       timerIsPaused = false;
@@ -442,14 +459,14 @@
     function resetDayCheckboxes() { scheduleData[currentDay].forEach((_, i) => localStorage.removeItem(`${currentDay}-${i}`)); renderTimeline(currentDay); }
 
     window.onload = () => {
-      const hoy = new Date().getDay(); // 0 es Domingo
+      const hoyIdx = new Date().getDay(); // 0 es Domingo
+      const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
       
-      if (hoy === 0) {
+      if (hoyIdx === 0) {
         document.getElementById('sunday-view').classList.remove('hidden');
         document.getElementById('main-content').classList.add('hidden');
       } else {
-        const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-        switchTab(dias[hoy]);
+        switchTab(dias[hoyIdx]);
       }
     };
   </script>
