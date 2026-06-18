@@ -5,37 +5,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Cronograma de Estudio - Pomodoro</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts - Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
 
-  <!-- VISTA DE DOMINGO (OCULTA POR DEFECTO) -->
+  <!-- Toggle dark/light mode -->
+  <div class="fixed top-4 left-4 z-[200] flex items-center gap-2">
+    <i class="bi bi-sun-fill text-slate-400 text-sm"></i>
+    <button id="theme-toggle" onclick="toggleTheme()" class="relative w-12 h-6 rounded-full bg-slate-300 transition-colors duration-300 focus:outline-none">
+      <span id="theme-knob" class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300"></span>
+    </button>
+    <i class="bi bi-moon-fill text-slate-400 text-sm"></i>
+  </div>
+
+  <!-- VISTA DE DOMINGO -->
   <div id="sunday-view" class="fixed inset-0 z-[100] hidden bg-slate-50 flex items-center justify-center p-6">
     <div class="text-center">
       <div class="text-8xl mb-6"><i style="color:rgb(105, 23, 143)" class="bi bi-yin-yang"></i></div>
@@ -47,63 +36,39 @@
   <!-- Estructura principal -->
   <main id="main-content" class="grid lg:grid-cols-12 gap-8 p-6 max-w-7xl mx-auto w-full">
 
-    <!-- Columna 2: Temporizador -->
+    <!-- Columna: Temporizador -->
     <section class="lg:col-span-8 flex flex-col gap-6">
-      <div
-        class="bg-white rounded-2xl border border-slate-200 p-8 md:p-12 shadow-sm sticky top-6 flex flex-col justify-between min-h-[600px]">
-
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 md:p-12 shadow-sm sticky top-6 flex flex-col justify-between min-h-[600px]">
         <div class="text-center flex flex-col items-center justify-center flex-1">
-          <div id="current-subject"
-            class="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 mb-2 w-full truncate tracking-tight">
-            Selecciona una sesión</div>
-          <div id="current-block-info" class="text-xs md:text-sm text-slate-400 mb-8 w-full truncate font-medium">Haz
-            clic en tu horario para iniciar</div>
-
-          <div id="timer-display"
-            class="text-8xl sm:text-9xl md:text-[10rem] font-black tracking-tighter text-slate-950 font-mono mb-8 select-none leading-none">
+          <div id="timer-display" class="tracking-tighter text-slate-950 mb-8 select-none leading-none timer-font">
             25:00
           </div>
-
           <div class="relative w-full max-w-xl mx-auto mb-8 h-4 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-            <div id="timer-progress" class="h-full bg-rose-500 transition-all duration-300 rounded-full"
-              style="width: 100%"></div>
+            <div id="timer-progress" class="h-full bg-rose-500 transition-all duration-300 rounded-full" style="width: 100%"></div>
           </div>
-
-          <div
-            class="flex items-center justify-between w-full max-w-xs px-4 py-2 mb-2 rounded-xl bg-slate-50 border border-slate-150">
+          <div class="flex items-center justify-between w-full max-w-xs px-4 py-2 mb-2 rounded-xl bg-slate-50 border border-slate-150">
             <span class="text-xs font-bold text-slate-600">Autogestionar flujo</span>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" id="toggle-auto-advance" checked class="sr-only peer">
-              <div
-                class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-900">
-              </div>
+              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-900"></div>
             </label>
           </div>
         </div>
-
         <div class="border-t border-slate-100 pt-6">
           <div class="flex justify-center gap-4 w-full max-w-lg mx-auto">
-            <button id="btn-start" onclick="startTimer()"
-              class="flex-1 py-4 bg-slate-950 text-white rounded-2xl font-bold text-base hover:bg-slate-800 transition-all duration-150 flex items-center justify-center gap-2.5 shadow-lg shadow-slate-200 active:scale-[0.99]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+            <button id="btn-start" onclick="startTimer()" class="flex-1 py-4 bg-slate-950 text-white rounded-2xl font-bold text-base hover:bg-slate-800 transition-all duration-150 flex items-center justify-center gap-2.5 shadow-lg shadow-slate-200 active:scale-[0.99]">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
               </svg> Iniciar
             </button>
-            <button id="btn-pause" onclick="pauseTimer()" disabled
-              class="flex-1 py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none transition-all duration-150 flex items-center justify-center gap-2.5 active:scale-[0.99]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                stroke="currentColor" class="w-5 h-5">
+            <button id="btn-pause" onclick="pauseTimer()" disabled class="flex-1 py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none transition-all duration-150 flex items-center justify-center gap-2.5 active:scale-[0.99]">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
               </svg> Pausar
             </button>
-            <button id="btn-reset" onclick="resetTimer()"
-              class="p-4 bg-slate-50 text-slate-500 hover:text-slate-800 rounded-2xl border border-slate-200 transition-all duration-150 active:scale-[0.97]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            <button id="btn-reset" onclick="resetTimer()" class="p-4 bg-slate-50 text-slate-500 hover:text-slate-800 rounded-2xl border border-slate-200 transition-all duration-150 active:scale-[0.97]">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
               </svg>
             </button>
           </div>
@@ -111,15 +76,19 @@
       </div>
     </section>
 
-    <!-- Columna 1: Horario -->
+    <!-- Columna: Horario -->
     <section class="lg:col-span-4 flex flex-col gap-6">
-      <div class="flex bg-white p-1 rounded-xl border border-slate-200 overflow-x-auto custom-scrollbar shadow-sm">
-        <button onclick="switchTab('lunes')" class="tab-btn flex-1 min-w-[70px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900 active-tab bg-slate-900 text-white" id="tab-lunes">Lunes</button>
-        <button onclick="switchTab('martes')" class="tab-btn flex-1 min-w-[70px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-martes">Martes</button>
-        <button onclick="switchTab('miercoles')" class="tab-btn flex-1 min-w-[70px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-miercoles">Miércoles</button>
-        <button onclick="switchTab('jueves')" class="tab-btn flex-1 min-w-[70px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-jueves">Jueves</button>
-        <button onclick="switchTab('viernes')" class="tab-btn flex-1 min-w-[70px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-viernes">Viernes</button>
-        <button onclick="switchTab('sabado')" class="tab-btn flex-1 min-w-[70px] py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-sabado">Sábado</button>
+      <div class="flex flex-col gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
+        <div class="flex">
+          <button onclick="switchTab('lunes')" class="tab-btn flex-1 py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900 active-tab bg-slate-900 text-white" id="tab-lunes">Lunes</button>
+          <button onclick="switchTab('martes')" class="tab-btn flex-1 py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-martes">Martes</button>
+          <button onclick="switchTab('miercoles')" class="tab-btn flex-1 py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-miercoles">Miércoles</button>
+        </div>
+        <div class="flex">
+          <button onclick="switchTab('jueves')" class="tab-btn flex-1 py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-jueves">Jueves</button>
+          <button onclick="switchTab('viernes')" class="tab-btn flex-1 py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-viernes">Viernes</button>
+          <button onclick="switchTab('sabado')" class="tab-btn flex-1 py-2 px-2.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900" id="tab-sabado">Sábado</button>
+        </div>
       </div>
 
       <div id="days-wrapper" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm min-h-[500px]">
@@ -134,8 +103,7 @@
             </svg> Reiniciar checks
           </button>
         </div>
-        <div id="timeline-list" class="space-y-4 relative before:absolute before:left-[17px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
-        </div>
+        <div id="timeline-list" class="space-y-4 relative before:absolute before:left-[17px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100"></div>
       </div>
     </section>
   </main>
@@ -165,316 +133,7 @@
     </div>
   </div>
 
-  <script>
-    const scheduleData = {
-      lunes: [
-        { type: "course", subject: "Aritmética", level: "hard", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 4" },
-        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-        { type: "course", subject: "Aritmética", level: "hard", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 4" },
-        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-        { type: "course", subject: "Aritmética", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 4" },
-        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-        { type: "course", subject: "Aritmética", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 4 de 4" },
-        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
-        { type: "course", subject: "Razonamiento Verbal", level: "medium", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 1 de 3" },
-        { type: "rest", time: "5:55 PM - 6:00 PM", duration: 5 },
-        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
-        { type: "course", subject: "Razonamiento Verbal", level: "medium", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 2 de 3 (Continuación)" },
-        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
-        { type: "course", subject: "Razonamiento Verbal", level: "medium", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 3 de 3 (Continuación)" },
-        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
-        { type: "course", subject: "Economía", level: "easy", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 1 de 2" },
-        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
-        { type: "course", subject: "Economía", level: "easy", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 2 de 2" }
-      ],
-      martes: [
-        { type: "course", subject: "Geografía", level: "easy", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 2" },
-        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-        { type: "course", subject: "Geografía", level: "easy", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 2" },
-        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-        { type: "course", subject: "Trigonometría", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 1 de 4" },
-        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-        { type: "course", subject: "Trigonometría", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 2 de 4" },
-        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
-        { type: "course", subject: "Trigonometría", level: "hard", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 3 de 4" },
-        { type: "rest", time: "5:55 PM - 6:00 PM", duration: 5 },
-        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
-        { type: "course", subject: "Trigonometría", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 4 de 4 (Continuación)" },
-        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
-        { type: "course", subject: "Razonamiento Matemático", level: "medium", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 1 de 3" },
-        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
-        { type: "course", subject: "Razonamiento Matemático", level: "medium", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 2 de 3" },
-        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
-        { type: "course", subject: "Razonamiento Matemático", level: "medium", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 3 de 3" }
-      ],
-      miercoles: [
-        { type: "course", subject: "Educación Cívica", level: "medium", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 3" },
-        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-        { type: "course", subject: "Educación Cívica", level: "medium", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 3" },
-        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-        { type: "course", subject: "Educación Cívica", level: "medium", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 3" },
-        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-        { type: "course", subject: "Historia", level: "easy", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 1 de 2" },
-        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
-        { type: "course", subject: "Historia", level: "easy", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 2 de 2" },
-        { type: "rest", time: "5:55 PM - 6:00 PM", duration: 5 },
-        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
-        { type: "course", subject: "Geometría", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 1 de 4" },
-        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
-        { type: "course", subject: "Geometría", level: "hard", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 2 de 4" },
-        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
-        { type: "course", subject: "Geometría", level: "hard", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 3 de 4" },
-        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
-        { type: "course", subject: "Geometría", level: "hard", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 4 de 4" }
-      ],
-      jueves: [
-        { type: "course", subject: "Errores del Simulacro", level: "medium", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 3" },
-        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-        { type: "course", subject: "Errores del Simulacro", level: "medium", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 3" },
-        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-        { type: "course", subject: "Errores del Simulacro", level: "medium", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 3" },
-        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-        { type: "course", subject: "Literatura", level: "easy", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 1 de 2" },
-        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
-        { type: "course", subject: "Literatura", level: "easy", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 2 de 2" },
-        { type: "rest", time: "5:55 PM - 6:00 PM", duration: 5 },
-        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
-        { type: "course", subject: "Química", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 1 de 4" },
-        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
-        { type: "course", subject: "Química", level: "7:00 PM - 7:25 PM", detail: "Pomodoro 2 de 4" },
-        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
-        { type: "course", subject: "Química", level: "hard", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 3 de 4" },
-        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
-        { type: "course", subject: "Química", level: "hard", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 4 de 4" }
-      ],
-      viernes: [
-        { type: "course", subject: "Física", level: "hard", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 4" },
-        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-        { type: "course", subject: "Física", level: "hard", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 4" },
-        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-        { type: "course", subject: "Física", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 4" },
-        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-        { type: "course", subject: "Física", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 4 de 4" },
-        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
-        { type: "course", subject: "Filosofía", level: "medium", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 1 de 3" },
-        { type: "rest", time: "5:55 PM - 6:00 PM", duration: 5 },
-        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
-        { type: "course", subject: "Filosofía", level: "medium", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 2 de 3 (Continuación)" },
-        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
-        { type: "course", subject: "Filosofía", level: "medium", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 3 de 3" },
-        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
-        { type: "course", subject: "Biología", level: "easy", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 1 de 2" },
-        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
-        { type: "course", subject: "Biología", level: "easy", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 2 de 2" }
-      ],
-      sabado: [
-        { type: "course", subject: "Lenguaje", level: "easy", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 2" },
-        { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-        { type: "course", subject: "Lenguaje", level: "easy", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 2" },
-        { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-        { type: "course", subject: "Álgebra", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 1 de 4" },
-        { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-        { type: "course", subject: "Álgebra", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 2 de 4" },
-        { type: "rest", time: "5:25 PM - 5:30 PM", duration: 5 },
-        { type: "course", subject: "Álgebra", level: "hard", time: "5:30 PM - 5:55 PM", detail: "Pomodoro 3 de 4" },
-        { type: "rest", time: "5:55 PM - 6:00 PM", duration: 5 },
-        { type: "dinner", time: "6:00 PM - 6:30 PM", duration: 30 },
-        { type: "course", subject: "Álgebra", level: "hard", time: "6:30 PM - 6:55 PM", detail: "Pomodoro 4 de 4" },
-        { type: "rest", time: "6:55 PM - 7:00 PM", duration: 5 },
-        { type: "course", subject: "Psicología", level: "medium", time: "7:00 PM - 7:25 PM", detail: "Pomodoro 1 de 3" },
-        { type: "rest", time: "7:25 PM - 7:30 PM", duration: 5 },
-        { type: "course", subject: "Psicología", level: "medium", time: "7:30 PM - 7:55 PM", detail: "Pomodoro 2 de 3" },
-        { type: "rest", time: "7:55 PM - 8:00 PM", duration: 5 },
-        { type: "course", subject: "Psicología", level: "medium", time: "8:00 PM - 8:25 PM", detail: "Pomodoro 3 de 3" }
-      ]
-    };
-
-    let currentDay = 'lunes';
-    let timerInterval = null;
-    let timerTimeRemaining = 1500;
-    let timerTotalDuration = 1500;
-    let timerIsPaused = true;
-    let currentTaskIndex = 0;
-    let soundLoopInterval = null;
-
-    function playBeepPattern(type) {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let notes = [];
-        if (type === 'course' || type === 'study') {
-          notes = [
-            { freq: 659.25, start: 0.0, duration: 0.15, oscType: 'sine' },
-            { freq: 523.25, start: 0.15, duration: 0.20, oscType: 'sine' },
-            { freq: 659.25, start: 0.45, duration: 0.15, oscType: 'sine' },
-            { freq: 523.25, start: 0.60, duration: 0.20, oscType: 'sine' }
-          ];
-        } else {
-          notes = [
-            { freq: 1000.00, start: 0.0, duration: 0.08, oscType: 'triangle' },
-            { freq: 1000.00, start: 0.5, duration: 0.08, oscType: 'triangle' }
-          ];
-        }
-        notes.forEach(note => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = note.oscType;
-          osc.frequency.setValueAtTime(note.freq, audioCtx.currentTime + note.start);
-          gain.gain.setValueAtTime(0.4, audioCtx.currentTime + note.start);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + note.start + note.duration);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(audioCtx.currentTime + note.start);
-          osc.stop(audioCtx.currentTime + note.start + note.duration);
-        });
-      } catch (err) { }
-    }
-
-    function startAlarmLoop(type) {
-      stopAlarmLoop();
-      playBeepPattern(type);
-      soundLoopInterval = setInterval(() => { playBeepPattern(type); }, 2200);
-    }
-
-    function stopAlarmLoop() {
-      if (soundLoopInterval) { clearInterval(soundLoopInterval); soundLoopInterval = null; }
-    }
-
-    function renderTimeline(day) {
-      const listElement = document.getElementById('timeline-list');
-      listElement.innerHTML = '';
-      const dayData = scheduleData[day];
-      dayData.forEach((item, index) => {
-        const taskKey = `${day}-${index}`;
-        const isChecked = localStorage.getItem(taskKey) === 'true';
-        const isActive = index === currentTaskIndex;
-        const isPast = index < currentTaskIndex;
-        let cursorClass = isActive ? "cursor-pointer ring-2 ring-slate-900 shadow-md transform scale-[1.01]" : (isPast ? "cursor-default opacity-60" : "cursor-not-allowed opacity-40 pointer-events-none");
-        let onclickHandler = isActive ? `selectTask('${day}', ${index})` : "";
-
-        const timelineItem = document.createElement('div');
-        timelineItem.className = `relative flex gap-4 pl-4 items-start transition-all duration-100 ${isActive ? 'z-10' : ''}`;
-
-        if (item.type === 'course') {
-          let bgClass = item.level === 'easy' ? "bg-amber-50 border-amber-100 text-amber-800" : (item.level === 'medium' ? "bg-emerald-50 border-emerald-100 text-emerald-800" : "bg-rose-50 border-rose-100 text-rose-800");
-          let badgeClass = item.level === 'easy' ? "bg-amber-500" : (item.level === 'medium' ? "bg-emerald-500" : "bg-rose-500");
-          timelineItem.innerHTML = `<div class="z-10 mt-1.5 flex-shrink-0"><button onclick="toggleCheck('${taskKey}', event)" ${!isActive && !isPast ? 'disabled' : ''} class="w-8 h-8 rounded-full border-2 ${isChecked ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200'} flex items-center justify-center"><svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m4.5 12.75 6 6 9-13.5"/></svg></button></div><div onclick="${onclickHandler}" class="flex-1 border p-4 rounded-xl shadow-sm ${bgClass} ${cursorClass}"><div class="flex justify-between items-start gap-2 mb-1"><h4 class="font-bold text-base">${item.subject}</h4><span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${badgeClass}">${item.level}</span></div><p class="text-xs opacity-75">${item.detail}</p><div class="text-xs font-semibold mt-2">${item.time}</div></div>`;
-        } else {
-          timelineItem.innerHTML = `<div class="z-10 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">...</div><div onclick="${onclickHandler}" class="flex-1 border p-3 rounded-xl ${cursorClass}"><span class="font-bold text-sm">${item.type === 'dinner' ? '🍽️ Cena' : '☕ Descanso'}</span></div>`;
-        }
-        listElement.appendChild(timelineItem);
-      });
-    }
-
-    function switchTab(day) {
-      currentDay = day;
-      localStorage.setItem('pomodoro_current_day', day);
-      currentTaskIndex = parseInt(localStorage.getItem(`pomodoro_task_index_${day}`) || 0);
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-slate-900', 'text-white'));
-      document.getElementById(`tab-${day}`).classList.add('bg-slate-900', 'text-white');
-      document.getElementById('day-title').innerText = day;
-      renderTimeline(day);
-      selectTask(day, currentTaskIndex, true);
-    }
-
-    function selectTask(day, index, restore = false) {
-      currentTaskIndex = index;
-      const item = scheduleData[day][index];
-      document.getElementById('current-subject').innerText = item.subject || (item.type === 'dinner' ? 'Cena' : 'Descanso');
-      if (!restore) setTimer(item.duration || 25);
-      renderTimeline(day);
-    }
-
-    function setTimer(minutes) {
-      clearInterval(timerInterval);
-      timerIsPaused = true;
-      timerTotalDuration = minutes * 60;
-      timerTimeRemaining = timerTotalDuration;
-      updateTimerDisplay();
-      document.getElementById('btn-start').disabled = false;
-      document.getElementById('btn-pause').disabled = true;
-    }
-
-    function updateTimerDisplay() {
-      const mins = Math.floor(timerTimeRemaining / 60);
-      const secs = timerTimeRemaining % 60;
-      document.getElementById('timer-display').innerText = `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
-      document.getElementById('timer-progress').style.width = `${(timerTimeRemaining / timerTotalDuration) * 100}%`;
-    }
-
-    function startTimer() {
-      // VALIDACIÓN DE DÍA
-      const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-      const hoy = dias[new Date().getDay()];
-      if (currentDay !== hoy) {
-          document.getElementById('day-error-modal').classList.remove('opacity-0', 'pointer-events-none');
-          return;
-      }
-
-      if (!timerIsPaused) return;
-      clearInterval(timerInterval);
-      timerIsPaused = false;
-      document.getElementById('btn-start').disabled = true;
-      document.getElementById('btn-pause').disabled = false;
-      timerInterval = setInterval(() => {
-        if (timerTimeRemaining > 0) {
-          timerTimeRemaining--;
-          updateTimerDisplay();
-          if (timerTimeRemaining === 0) {
-            clearInterval(timerInterval);
-            timerIsPaused = true;
-            document.getElementById('btn-start').disabled = false;
-            document.getElementById('btn-pause').disabled = true;
-            startAlarmLoop(scheduleData[currentDay][currentTaskIndex].type);
-            showAlarmModal(scheduleData[currentDay][currentTaskIndex]);
-          }
-        }
-      }, 1000);
-    }
-
-    function pauseTimer() {
-      clearInterval(timerInterval);
-      timerIsPaused = true;
-      document.getElementById('btn-start').disabled = false;
-      document.getElementById('btn-pause').disabled = true;
-    }
-
-    function resetTimer() {
-      pauseTimer();
-      timerTimeRemaining = timerTotalDuration;
-      updateTimerDisplay();
-    }
-
-    function showAlarmModal(task) {
-      const modal = document.getElementById('custom-alarm-modal');
-      document.getElementById('modal-alarm-message').innerText = "Tu bloque ha finalizado.";
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-    }
-
-    function dismissAlarmAndContinue() {
-      stopAlarmLoop();
-      document.getElementById('custom-alarm-modal').classList.add('opacity-0', 'pointer-events-none');
-      if (currentTaskIndex + 1 < scheduleData[currentDay].length) {
-        currentTaskIndex++;
-        localStorage.setItem(`pomodoro_task_index_${currentDay}`, currentTaskIndex);
-        selectTask(currentDay, currentTaskIndex);
-      }
-    }
-
-    function toggleCheck(key, e) { e.stopPropagation(); localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true'); renderTimeline(currentDay); }
-    function resetDayCheckboxes() { scheduleData[currentDay].forEach((_, i) => localStorage.removeItem(`${currentDay}-${i}`)); renderTimeline(currentDay); }
-
-    window.onload = () => {
-      const hoyIdx = new Date().getDay(); // 0 es Domingo
-      const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-      
-      if (hoyIdx === 0) {
-        document.getElementById('sunday-view').classList.remove('hidden');
-        document.getElementById('main-content').classList.add('hidden');
-      } else {
-        switchTab(dias[hoyIdx]);
-      }
-    };
-  </script>
+  <script src="script.js"></script>
 </body>
 
-</html>
+</html>s
