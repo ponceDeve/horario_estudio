@@ -123,56 +123,6 @@ let timerIsPaused = true;
 let currentTaskIndex = 0;
 let soundLoopInterval = null;
 
-// ── Persistencia del cronómetro ──────────────────────────────────────────────
-
-function saveTimerState() {
-  const state = {
-    day: currentDay,
-    taskIndex: currentTaskIndex,
-    timeRemaining: timerTimeRemaining,
-    totalDuration: timerTotalDuration,
-    isPaused: timerIsPaused,
-    savedAt: Date.now()
-  };
-  localStorage.setItem('pomodoro_timer_state', JSON.stringify(state));
-}
-
-function loadTimerState() {
-  try {
-    const raw = localStorage.getItem('pomodoro_timer_state');
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch (e) { return null; }
-}
-
-function clearTimerState() {
-  localStorage.removeItem('pomodoro_timer_state');
-}
-
-// ── Detección de cambio de día ────────────────────────────────────────────────
-
-function getTodayKey() {
-  const d = new Date();
-  // Clave única por fecha: "YYYY-MM-DD"
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function checkAndResetIfNewDay() {
-  const lastDate = localStorage.getItem('pomodoro_last_date');
-  const today = getTodayKey();
-  if (lastDate && lastDate !== today) {
-    // Nuevo día: limpiar progreso de todos los días
-    const dias = ['lunes','martes','miercoles','jueves','viernes','sabado'];
-    dias.forEach(dia => {
-      localStorage.removeItem(`pomodoro_task_index_${dia}`);
-      const data = window.scheduleData ? window.scheduleData[dia] : [];
-      if (data) data.forEach((_, i) => localStorage.removeItem(`${dia}-${i}`));
-    });
-    clearTimerState();
-  }
-  localStorage.setItem('pomodoro_last_date', today);
-}
-
 function playBeepPattern(type) {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -388,7 +338,6 @@ function dismissAlarmAndContinue() {
     currentTaskIndex++;
     localStorage.setItem(`pomodoro_task_index_${currentDay}`, currentTaskIndex);
     selectTask(currentDay, currentTaskIndex);
-    clearTimerState();
   }
 }
 
@@ -413,11 +362,51 @@ function toggleTheme() {
   renderTimeline(currentDay);
 }
 
-window.onload = () => {
-  // Exponer scheduleData globalmente para checkAndResetIfNewDay
-  window.scheduleData = scheduleData;
 
-  // Detectar nuevo día y limpiar si corresponde
+// ── Persistencia del cronómetro ──────────────────────────────────────────────
+
+function saveTimerState() {
+  localStorage.setItem('pomodoro_timer_state', JSON.stringify({
+    day: currentDay,
+    taskIndex: currentTaskIndex,
+    timeRemaining: timerTimeRemaining,
+    totalDuration: timerTotalDuration,
+    savedAt: Date.now()
+  }));
+}
+
+function loadTimerState() {
+  try { return JSON.parse(localStorage.getItem('pomodoro_timer_state')); }
+  catch (e) { return null; }
+}
+
+function clearTimerState() {
+  localStorage.removeItem('pomodoro_timer_state');
+}
+
+// ── Detección de cambio de día ────────────────────────────────────────────────
+
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function checkAndResetIfNewDay() {
+  const lastDate = localStorage.getItem('pomodoro_last_date');
+  const today = getTodayKey();
+  if (lastDate && lastDate !== today) {
+    const dias = ['lunes','martes','miercoles','jueves','viernes','sabado'];
+    dias.forEach(dia => {
+      localStorage.removeItem(`pomodoro_task_index_${dia}`);
+      (scheduleData[dia] || []).forEach((_, i) => localStorage.removeItem(`${dia}-${i}`));
+    });
+    clearTimerState();
+  }
+  localStorage.setItem('pomodoro_last_date', today);
+}
+
+window.onload = () => {
+  window.scheduleData = scheduleData;
   checkAndResetIfNewDay();
 
   const hoyIdx = new Date().getDay();
@@ -433,17 +422,15 @@ window.onload = () => {
     document.getElementById('sunday-view').classList.remove('hidden');
     document.getElementById('main-content').classList.add('hidden');
   } else {
-    // Restaurar estado del cronómetro si existe y es del mismo día
-    const savedState = loadTimerState();
     const todayName = dias[hoyIdx];
-
     switchTab(todayName);
 
-    if (savedState && savedState.day === todayName) {
-      currentTaskIndex = savedState.taskIndex;
-      timerTotalDuration = savedState.totalDuration;
-      timerTimeRemaining = savedState.timeRemaining;
-      timerIsPaused = true; // siempre restaurar en pausa (seguridad)
+    const saved = loadTimerState();
+    if (saved && saved.day === todayName) {
+      currentTaskIndex = saved.taskIndex;
+      timerTotalDuration = saved.totalDuration;
+      timerTimeRemaining = saved.timeRemaining;
+      timerIsPaused = true;
       updateTimerDisplay();
       document.getElementById('btn-start').disabled = false;
       document.getElementById('btn-pause').disabled = true;
