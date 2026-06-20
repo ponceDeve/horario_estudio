@@ -1,127 +1,111 @@
+// ── Datos: ahora cada día solo define SUS CURSOS (sin horario fijo) ──────────
+// El orden en que se estudian ya no importa: el usuario elige el curso que quiere.
+// Dentro de cada curso, los pomodoros sí siguen en orden con descansos cortos.
 const scheduleData = {
   lunes: [
-    { type: "course", subject: "Aritmética", level: "hard", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 4" },
-    { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-    { type: "course", subject: "Aritmética", level: "hard", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 4" },
-    { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-    { type: "course", subject: "Aritmética", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 4" },
-    { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-    { type: "course", subject: "Aritmética", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 4 de 4" },
-    { type: "rest", time: "5:25 PM - 5:40 PM", duration: 15 },
-    { type: "course", subject: "Razonamiento Verbal", level: "medium", time: "5:40 PM - 6:05 PM", detail: "Pomodoro 1 de 2" },
-    { type: "rest", time: "6:05 PM - 6:10 PM", duration: 5 },
-    { type: "dinner", time: "6:10 PM - 6:40 PM", duration: 30 },
-    { type: "course", subject: "Razonamiento Verbal", level: "medium", time: "6:40 PM - 7:05 PM", detail: "Pomodoro 2 de 2 (Continuación)" },
-    { type: "rest", time: "7:05 PM - 7:20 PM", duration: 15 },
-    { type: "course", subject: "Economía", level: "easy", time: "7:20 PM - 7:45 PM", detail: "Pomodoro 1 de 3" },
-    { type: "rest", time: "7:45 PM - 7:50 PM", duration: 5 },
-    { type: "course", subject: "Economía", level: "easy", time: "7:50 PM - 8:15 PM", detail: "Pomodoro 2 de 3" },
-    { type: "rest", time: "8:15 PM - 8:20 PM", duration: 5 },
-    { type: "course", subject: "Economía", level: "easy", time: "8:20 PM - 8:45 PM", detail: "Pomodoro 3 de 3" }
+    { subject: "Aritmética", level: "hard", pomodoros: 4 },
+    { subject: "Razonamiento Verbal", level: "medium", pomodoros: 2 },
+    { subject: "Economía", level: "easy", pomodoros: 3 }
   ],
   martes: [
-    { type: "course", subject: "Geografía", level: "medium", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 3" },
-    { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-    { type: "course", subject: "Geografía", level: "medium", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 3" },
-    { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-    { type: "course", subject: "Geografía", level: "medium", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 3" },
-    { type: "rest", time: "4:55 PM - 5:10 PM", duration: 15 },
-    { type: "course", subject: "Trigonometría", level: "hard", time: "5:10 PM - 5:35 PM", detail: "Pomodoro 1 de 4" },
-    { type: "rest", time: "5:35 PM - 5:40 PM", duration: 5 },
-    { type: "course", subject: "Trigonometría", level: "hard", time: "5:40 PM - 6:05 PM", detail: "Pomodoro 2 de 4" },
-    { type: "rest", time: "6:05 PM - 6:10 PM", duration: 5 },
-    { type: "dinner", time: "6:10 PM - 6:40 PM", duration: 30 },
-    { type: "course", subject: "Trigonometría", level: "hard", time: "6:40 PM - 7:05 PM", detail: "Pomodoro 3 de 4 (Continuación)" },
-    { type: "rest", time: "7:05 PM - 7:10 PM", duration: 5 },
-    { type: "course", subject: "Trigonometría", level: "hard", time: "7:10 PM - 7:35 PM", detail: "Pomodoro 4 de 4 (Continuación)" },
-    { type: "rest", time: "7:35 PM - 7:50 PM", duration: 15 },
-    { type: "course", subject: "Razonamiento Matemático", level: "easy", time: "7:50 PM - 8:15 PM", detail: "Pomodoro 1 de 2" },
-    { type: "rest", time: "8:15 PM - 8:20 PM", duration: 5 },
-    { type: "course", subject: "Razonamiento Matemático", level: "easy", time: "8:20 PM - 8:45 PM", detail: "Pomodoro 2 de 2" }
+    { subject: "Geografía", level: "medium", pomodoros: 3 },
+    { subject: "Trigonometría", level: "hard", pomodoros: 4 },
+    { subject: "Razonamiento Matemático", level: "easy", pomodoros: 2 }
   ],
   miercoles: [
-    { type: "course", subject: "Educación Cívica", level: "medium", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 2" },
-    { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-    { type: "course", subject: "Educación Cívica", level: "medium", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 2" },
-    { type: "rest", time: "4:25 PM - 4:40 PM", duration: 15 },
-    { type: "course", subject: "Historia", level: "easy", time: "4:40 PM - 5:05 PM", detail: "Pomodoro 1 de 3" },
-    { type: "rest", time: "5:05 PM - 5:10 PM", duration: 5 },
-    { type: "course", subject: "Historia", level: "easy", time: "5:10 PM - 5:35 PM", detail: "Pomodoro 2 de 3" },
-    { type: "rest", time: "5:35 PM - 5:40 PM", duration: 5 },
-    { type: "course", subject: "Historia", level: "easy", time: "5:40 PM - 6:05 PM", detail: "Pomodoro 3 de 3" },
-    { type: "rest", time: "6:05 PM - 6:10 PM", duration: 5 },
-    { type: "dinner", time: "6:10 PM - 6:40 PM", duration: 30 },
-    { type: "course", subject: "Geometría", level: "hard", time: "6:40 PM - 7:05 PM", detail: "Pomodoro 1 de 4" },
-    { type: "rest", time: "7:05 PM - 7:10 PM", duration: 5 },
-    { type: "course", subject: "Geometría", level: "hard", time: "7:10 PM - 7:35 PM", detail: "Pomodoro 2 de 4" },
-    { type: "rest", time: "7:35 PM - 7:40 PM", duration: 5 },
-    { type: "course", subject: "Geometría", level: "hard", time: "7:40 PM - 8:05 PM", detail: "Pomodoro 3 de 4" },
-    { type: "rest", time: "8:05 PM - 8:10 PM", duration: 5 },
-    { type: "course", subject: "Geometría", level: "hard", time: "8:10 PM - 8:35 PM", detail: "Pomodoro 4 de 4" }
+    { subject: "Educación Cívica", level: "medium", pomodoros: 2 },
+    { subject: "Historia", level: "easy", pomodoros: 3 },
+    { subject: "Geometría", level: "hard", pomodoros: 4 }
   ],
   jueves: [
-    { type: "course", subject: "Literatura", level: "easy", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 2" },
-    { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-    { type: "course", subject: "Literatura", level: "easy", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 2" },
-    { type: "rest", time: "4:25 PM - 4:40 PM", duration: 15 },
-    { type: "course", subject: "Química", level: "hard", time: "4:40 PM - 5:05 PM", detail: "Pomodoro 1 de 4" },
-    { type: "rest", time: "5:05 PM - 5:10 PM", duration: 5 },
-    { type: "course", subject: "Química", level: "hard", time: "5:10 PM - 5:35 PM", detail: "Pomodoro 2 de 4" },
-    { type: "rest", time: "5:35 PM - 5:40 PM", duration: 5 },
-    { type: "course", subject: "Química", level: "hard", time: "5:40 PM - 6:05 PM", detail: "Pomodoro 3 de 4" },
-    { type: "rest", time: "6:05 PM - 6:10 PM", duration: 5 },
-    { type: "dinner", time: "6:10 PM - 6:40 PM", duration: 30 },
-    { type: "course", subject: "Química", level: "hard", time: "6:40 PM - 7:05 PM", detail: "Pomodoro 4 de 4 (Continuación)" },
+    { subject: "Literatura", level: "easy", pomodoros: 2 },
+    { subject: "Química", level: "hard", pomodoros: 4 }
   ],
   viernes: [
-    { type: "course", subject: "Física", level: "hard", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 4" },
-    { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-    { type: "course", subject: "Física", level: "hard", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 4" },
-    { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-    { type: "course", subject: "Física", level: "hard", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 4" },
-    { type: "rest", time: "4:55 PM - 5:00 PM", duration: 5 },
-    { type: "course", subject: "Física", level: "hard", time: "5:00 PM - 5:25 PM", detail: "Pomodoro 4 de 4" },
-    { type: "rest", time: "5:25 PM - 5:40 PM", duration: 15 },
-    { type: "course", subject: "Filosofía", level: "medium", time: "5:40 PM - 6:05 PM", detail: "Pomodoro 1 de 2" },
-    { type: "rest", time: "6:05 PM - 6:10 PM", duration: 5 },
-    { type: "dinner", time: "6:10 PM - 6:40 PM", duration: 30 },
-    { type: "course", subject: "Filosofía", level: "medium", time: "6:40 PM - 7:05 PM", detail: "Pomodoro 2 de 2 (Continuación)" },
-    { type: "rest", time: "7:05 PM - 7:20 PM", duration: 15 },
-    { type: "course", subject: "Biología", level: "easy", time: "7:20 PM - 7:45 PM", detail: "Pomodoro 1 de 3" },
-    { type: "rest", time: "7:45 PM - 7:50 PM", duration: 5 },
-    { type: "course", subject: "Biología", level: "easy", time: "7:50 PM - 8:15 PM", detail: "Pomodoro 2 de 3" },
-    { type: "rest", time: "8:15 PM - 8:20 PM", duration: 5 },
-    { type: "course", subject: "Biología", level: "easy", time: "8:20 PM - 8:45 PM", detail: "Pomodoro 3 de 3" }
+    { subject: "Física", level: "hard", pomodoros: 4 },
+    { subject: "Filosofía", level: "medium", pomodoros: 2 },
+    { subject: "Biología", level: "easy", pomodoros: 3 }
   ],
   sabado: [
-    { type: "course", subject: "Lenguaje", level: "easy", time: "3:30 PM - 3:55 PM", detail: "Pomodoro 1 de 3" },
-    { type: "rest", time: "3:55 PM - 4:00 PM", duration: 5 },
-    { type: "course", subject: "Lenguaje", level: "easy", time: "4:00 PM - 4:25 PM", detail: "Pomodoro 2 de 3" },
-    { type: "rest", time: "4:25 PM - 4:30 PM", duration: 5 },
-    { type: "course", subject: "Lenguaje", level: "easy", time: "4:30 PM - 4:55 PM", detail: "Pomodoro 3 de 3" },
-    { type: "rest", time: "4:55 PM - 5:10 PM", duration: 15 },
-    { type: "course", subject: "Álgebra", level: "hard", time: "5:10 PM - 5:35 PM", detail: "Pomodoro 1 de 4" },
-    { type: "rest", time: "5:35 PM - 5:40 PM", duration: 5 },
-    { type: "course", subject: "Álgebra", level: "hard", time: "5:40 PM - 6:05 PM", detail: "Pomodoro 2 de 4" },
-    { type: "rest", time: "6:05 PM - 6:10 PM", duration: 5 },
-    { type: "dinner", time: "6:10 PM - 6:40 PM", duration: 30 },
-    { type: "course", subject: "Álgebra", level: "hard", time: "6:40 PM - 7:05 PM", detail: "Pomodoro 3 de 4 (Continuación)" },
-    { type: "rest", time: "7:05 PM - 7:10 PM", duration: 5 },
-    { type: "course", subject: "Álgebra", level: "hard", time: "7:10 PM - 7:35 PM", detail: "Pomodoro 4 de 4 (Continuación)" },
-    { type: "rest", time: "7:35 PM - 7:50 PM", duration: 15 },
-    { type: "course", subject: "Psicología", level: "medium", time: "7:50 PM - 8:15 PM", detail: "Pomodoro 1 de 2" },
-    { type: "rest", time: "8:15 PM - 8:20 PM", duration: 5 },
-    { type: "course", subject: "Psicología", level: "medium", time: "8:20 PM - 8:45 PM", detail: "Pomodoro 2 de 2" }
+    { subject: "Lenguaje", level: "easy", pomodoros: 3 },
+    { subject: "Álgebra", level: "hard", pomodoros: 4 },
+    { subject: "Psicología", level: "medium", pomodoros: 2 }
   ]
 };
 
+const POMODORO_MIN = 25;
+const REST_MIN = 5;
+
 let currentDay = 'lunes';
+let currentCourseIndex = null;   // null = viendo la lista de cursos del día
+let currentTaskIndex = 0;        // posición dentro del curso abierto (pomodoro o descanso)
 let timerInterval = null;
 let timerTimeRemaining = 1500;
 let timerTotalDuration = 1500;
 let timerIsPaused = true;
-let currentTaskIndex = 0;
 let soundLoopInterval = null;
+let timerMode = 'course';        // 'course' | 'manual' (descanso/cena manual)
+let manualBreakLabel = '';
+
+// ── Construcción de tareas de un curso (pomodoros + descansos cortos) ────────
+
+function buildCourseTasks(course) {
+  const tasks = [];
+  for (let i = 1; i <= course.pomodoros; i++) {
+    tasks.push({ type: "course", subject: course.subject, level: course.level, detail: `Pomodoro ${i} de ${course.pomodoros}`, duration: POMODORO_MIN });
+    if (i < course.pomodoros) {
+      tasks.push({ type: "rest", duration: REST_MIN });
+    }
+  }
+  return tasks;
+}
+
+function getCourseTasks(day, courseIndex) {
+  return buildCourseTasks(scheduleData[day][courseIndex]);
+}
+
+function levelClasses(level) {
+  if (level === 'easy') return { box: 'bg-amber-50 border-amber-100 text-amber-800', badge: 'bg-amber-500' };
+  if (level === 'medium') return { box: 'bg-emerald-50 border-emerald-100 text-emerald-800', badge: 'bg-emerald-500' };
+  return { box: 'bg-rose-50 border-rose-100 text-rose-800', badge: 'bg-rose-500' };
+}
+
+function formatMMSS(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+}
+
+// ── Progreso/cronómetro guardado por curso ────────────────────────────────────
+// Cada curso guarda su propio punto exacto (tarea + segundos restantes), así que
+// si cambias de curso a la mitad de un pomodoro, ese tiempo queda guardado y lo
+// retomas justo donde lo dejaste.
+
+function getCourseProgress(day, courseIndex) {
+  const tasks = getCourseTasks(day, courseIndex);
+  const raw = localStorage.getItem(`pomodoro_progress_${day}_${courseIndex}`);
+  if (raw) {
+    try {
+      const p = JSON.parse(raw);
+      if (typeof p.taskIndex === 'number' && typeof p.timeRemaining === 'number' && typeof p.totalDuration === 'number') {
+        return p;
+      }
+    } catch (e) {}
+  }
+  const firstDuration = (tasks[0] ? tasks[0].duration : POMODORO_MIN) * 60;
+  return { taskIndex: 0, timeRemaining: firstDuration, totalDuration: firstDuration };
+}
+
+function saveCourseProgress(day, courseIndex) {
+  if (courseIndex === null || courseIndex === undefined) return;
+  localStorage.setItem(`pomodoro_progress_${day}_${courseIndex}`, JSON.stringify({
+    taskIndex: currentTaskIndex,
+    timeRemaining: timerTimeRemaining,
+    totalDuration: timerTotalDuration
+  }));
+}
+
+// ── Sonidos ────────────────────────────────────────────────────────────────
 
 function playBeepPattern(type) {
   try {
@@ -129,7 +113,7 @@ function playBeepPattern(type) {
     let notes = [];
     if (type === 'course' || type === 'study') {
       notes = [
-        { freq: 659.25, start: 0.0,  duration: 0.15, oscType: 'sine' },
+        { freq: 659.25, start: 0.0, duration: 0.15, oscType: 'sine' },
         { freq: 523.25, start: 0.15, duration: 0.20, oscType: 'sine' },
         { freq: 659.25, start: 0.45, duration: 0.15, oscType: 'sine' },
         { freq: 523.25, start: 0.60, duration: 0.20, oscType: 'sine' }
@@ -165,104 +149,192 @@ function stopAlarmLoop() {
   if (soundLoopInterval) { clearInterval(soundLoopInterval); soundLoopInterval = null; }
 }
 
-function renderTimeline(day) {
-  const listElement = document.getElementById('timeline-list');
-  listElement.innerHTML = '';
-  const dayData = scheduleData[day];
-  dayData.forEach((item, index) => {
-    const taskKey = `${day}-${index}`;
+// ── Render: lista de cursos del día ───────────────────────────────────────────
+
+function renderCourseList(day) {
+  document.getElementById('btn-back-course').classList.add('hidden');
+  document.getElementById('day-subtitle').innerText = 'Elige un curso para empezar';
+
+  const container = document.getElementById('timeline-list');
+  container.classList.remove('timeline-line');
+  container.innerHTML = '';
+
+  const courses = scheduleData[day];
+
+  courses.forEach((course, idx) => {
+    const tasks = buildCourseTasks(course);
+    const progress = getCourseProgress(day, idx);
+    const done = progress.taskIndex >= tasks.length;
+    const completedPomodoros = done
+      ? course.pomodoros
+      : tasks.slice(0, progress.taskIndex).filter(t => t.type === 'course').length;
+    const pct = Math.round((completedPomodoros / course.pomodoros) * 100);
+    const lc = levelClasses(course.level);
+    const midPomodoro = !done && progress.timeRemaining > 0 && progress.timeRemaining < progress.totalDuration;
+
+    let statusText;
+    if (done) statusText = 'Completado';
+    else if (midPomodoro) statusText = `En pausa · ${formatMMSS(progress.timeRemaining)} restantes`;
+    else if (completedPomodoros > 0) statusText = 'En curso';
+    else statusText = 'No iniciado';
+
+    const card = document.createElement('div');
+    card.onclick = () => openCourse(day, idx);
+    card.className = `cursor-pointer border border-slate-200 rounded-xl p-4 transition-all duration-150 hover:shadow-md hover:border-slate-300 ${done ? 'opacity-70' : ''}`;
+    card.innerHTML = `
+      <div class="flex justify-between items-start gap-2 mb-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${lc.badge}">${course.level}</span>
+          <h4 class="font-bold text-slate-900 text-base">${course.subject}</h4>
+        </div>
+        ${done
+          ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-emerald-500 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>`
+          : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-slate-300 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>`}
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full ${lc.badge} rounded-full transition-all duration-300" style="width:${pct}%"></div>
+        </div>
+        <span class="text-[11px] font-semibold text-slate-500 whitespace-nowrap">${completedPomodoros}/${course.pomodoros} 🍅</span>
+      </div>
+      <p class="text-[11px] text-slate-400 mt-2">${statusText}</p>
+    `;
+    container.appendChild(card);
+  });
+
+  const breakBtn = document.createElement('button');
+  breakBtn.type = 'button';
+  breakBtn.onclick = () => startManualBreak(30, 'Cena');
+  breakBtn.className = 'w-full mt-2 py-3 rounded-xl border border-dashed border-slate-200 text-slate-500 text-xs font-semibold hover:border-slate-300 hover:text-slate-700 transition-colors duration-150 flex items-center justify-center gap-2';
+  breakBtn.innerHTML = `🍽️ Tomar un descanso para cenar (30 min)`;
+  container.appendChild(breakBtn);
+}
+
+// ── Render: detalle de un curso (su propia mini-timeline) ────────────────────
+
+function renderCourseDetail(day, courseIndex) {
+  document.getElementById('btn-back-course').classList.remove('hidden');
+
+  const course = scheduleData[day][courseIndex];
+  const tasks = buildCourseTasks(course);
+  const done = currentTaskIndex >= tasks.length;
+  const completedPomodoros = done
+    ? course.pomodoros
+    : tasks.slice(0, currentTaskIndex).filter(t => t.type === 'course').length;
+
+  document.getElementById('day-subtitle').innerText = done
+    ? `${course.subject} · Completado ✅`
+    : `${course.subject} · ${completedPomodoros}/${course.pomodoros} pomodoros`;
+
+  const container = document.getElementById('timeline-list');
+  container.classList.add('timeline-line');
+  container.innerHTML = '';
+
+  tasks.forEach((item, index) => {
+    const taskKey = `${day}-${courseIndex}-${index}`;
     const isChecked = localStorage.getItem(taskKey) === 'true';
     const isActive = index === currentTaskIndex;
     const isPast = index < currentTaskIndex;
-    const cursorClass = isActive
-      ? "cursor-pointer ring-2 ring-slate-900 shadow-md transform scale-[1.01]"
-      : (isPast ? "cursor-default opacity-60" : "cursor-not-allowed opacity-40 pointer-events-none");
-    const onclickHandler = isActive ? `selectTask('${day}', ${index})` : "";
-    const isDark = document.body.classList.contains('dark');
+    const stateClass = isActive ? 'ring-2 ring-slate-900 shadow-md' : (isPast ? 'opacity-60' : 'opacity-40');
 
-    const timelineItem = document.createElement('div');
-    timelineItem.className = `relative flex gap-4 pl-4 items-start transition-all duration-100 ${isActive ? 'z-10' : ''}`;
+    const row = document.createElement('div');
+    row.className = `relative flex gap-4 pl-4 items-start ${isActive ? 'z-10' : ''}`;
 
     if (item.type === 'course') {
-      let bgClass, badgeClass;
-      if (isDark) {
-        bgClass = item.level === 'easy'
-          ? "border-yellow-800 text-yellow-300"
-          : (item.level === 'medium' ? "border-emerald-800 text-emerald-300" : "border-rose-900 text-rose-300");
-        const bgStyle = item.level === 'easy'
-          ? "background-color:#451a03"
-          : (item.level === 'medium' ? "background-color:#022c22" : "background-color:#4c0519");
-        badgeClass = item.level === 'easy' ? "bg-amber-500" : (item.level === 'medium' ? "bg-emerald-500" : "bg-rose-500");
-        timelineItem.innerHTML = `
-          <div class="z-10 mt-1.5 flex-shrink-0">
-            <button onclick="toggleCheck('${taskKey}', event)" ${!isActive && !isPast ? 'disabled' : ''}
-              class="w-8 h-8 rounded-full border-2 ${isChecked ? 'border-slate-400 text-slate-200' : 'border-slate-600'} flex items-center justify-center"
-              style="background-color:${isChecked ? '#f1f5f9' : '#1e293b'}; color:${isChecked ? '#0f172a' : 'inherit'}">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m4.5 12.75 6 6 9-13.5"/></svg>
-            </button>
+      const lc = levelClasses(item.level);
+      row.innerHTML = `
+        <div class="z-10 mt-1.5 flex-shrink-0">
+          <button onclick="toggleCheck('${taskKey}', event)" ${!isActive && !isPast ? 'disabled' : ''}
+            class="w-8 h-8 rounded-full border-2 ${isChecked ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200'} flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m4.5 12.75 6 6 9-13.5"/></svg>
+          </button>
+        </div>
+        <div class="flex-1 border p-4 rounded-xl shadow-sm ${lc.box} ${stateClass}">
+          <div class="flex justify-between items-start gap-2 mb-1">
+            <h4 class="font-bold text-base">${item.subject}</h4>
+            <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${lc.badge}">${item.level}</span>
           </div>
-          <div onclick="${onclickHandler}" class="flex-1 border p-4 rounded-xl shadow-sm ${bgClass} ${cursorClass}" style="${bgStyle}">
-            <div class="flex justify-between items-start gap-2 mb-1">
-              <h4 class="font-bold text-base">${item.subject}</h4>
-              <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${badgeClass}">${item.level}</span>
-            </div>
-            <p class="text-xs opacity-75">${item.detail}</p>
-            <div class="text-xs font-semibold mt-2">${item.time}</div>
-          </div>`;
-      } else {
-        bgClass = item.level === 'easy'
-          ? "bg-amber-50 border-amber-100 text-amber-800"
-          : (item.level === 'medium' ? "bg-emerald-50 border-emerald-100 text-emerald-800" : "bg-rose-50 border-rose-100 text-rose-800");
-        badgeClass = item.level === 'easy' ? "bg-amber-500" : (item.level === 'medium' ? "bg-emerald-500" : "bg-rose-500");
-        timelineItem.innerHTML = `
-          <div class="z-10 mt-1.5 flex-shrink-0">
-            <button onclick="toggleCheck('${taskKey}', event)" ${!isActive && !isPast ? 'disabled' : ''}
-              class="w-8 h-8 rounded-full border-2 ${isChecked ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200'} flex items-center justify-center">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m4.5 12.75 6 6 9-13.5"/></svg>
-            </button>
-          </div>
-          <div onclick="${onclickHandler}" class="flex-1 border p-4 rounded-xl shadow-sm ${bgClass} ${cursorClass}">
-            <div class="flex justify-between items-start gap-2 mb-1">
-              <h4 class="font-bold text-base">${item.subject}</h4>
-              <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${badgeClass}">${item.level}</span>
-            </div>
-            <p class="text-xs opacity-75">${item.detail}</p>
-            <div class="text-xs font-semibold mt-2">${item.time}</div>
-          </div>`;
-      }
+          <p class="text-xs opacity-75">${item.detail}</p>
+        </div>`;
     } else {
-      const restBg = isDark ? 'style="background-color:#1e293b; border-color:#334155; color:#94a3b8"' : '';
-      const dotBg  = isDark ? 'style="background-color:#334155; color:#94a3b8"' : '';
-      timelineItem.innerHTML = `
-        <div class="z-10 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center" ${dotBg}>...</div>
-        <div onclick="${onclickHandler}" class="flex-1 border p-3 rounded-xl ${cursorClass}" ${restBg}>
-          <span class="font-bold text-sm">${item.type === 'dinner' ? '🍽️ Cena' : '☕ Descanso'}</span>
+      row.innerHTML = `
+        <div class="z-10 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs flex-shrink-0">☕</div>
+        <div class="flex-1 border bg-slate-50 border-slate-200 text-slate-700 p-3 rounded-xl ${stateClass}">
+          <span class="font-bold text-sm">Descanso (${item.duration} min)</span>
         </div>`;
     }
-    listElement.appendChild(timelineItem);
+    container.appendChild(row);
   });
 }
 
-function switchTab(day) {
-  currentDay = day;
-  localStorage.setItem('pomodoro_current_day', day);
-  currentTaskIndex = parseInt(localStorage.getItem(`pomodoro_task_index_${day}`) || 0);
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-slate-900', 'text-white', 'active-tab'));
-  const activeBtn = document.getElementById(`tab-${day}`);
-  activeBtn.classList.add('bg-slate-900', 'text-white', 'active-tab');
-  document.getElementById('day-title').innerText = day;
-  renderTimeline(day);
-  selectTask(day, currentTaskIndex, true);
+function renderCurrentView() {
+  if (currentCourseIndex === null) renderCourseList(currentDay);
+  else renderCourseDetail(currentDay, currentCourseIndex);
 }
 
-function selectTask(day, index, restore = false) {
-  currentTaskIndex = index;
-  if (!restore) {
-    const item = scheduleData[day][index];
-    setTimer(item.duration || 25);
+// ── Navegación entre lista de cursos y detalle de un curso ───────────────────
+
+function openCourse(day, courseIndex) {
+  // Si había otro curso (o un descanso manual) corriendo, lo pausamos y guardamos
+  if (currentCourseIndex !== null) {
+    if (!timerIsPaused) pauseTimer();
+    else saveCourseProgress(currentDay, currentCourseIndex);
+  } else if (timerMode === 'manual' && !timerIsPaused) {
+    pauseTimer();
   }
-  renderTimeline(day);
+
+  timerMode = 'course';
+  currentDay = day;
+  currentCourseIndex = courseIndex;
+  localStorage.setItem(`pomodoro_open_course_${day}`, courseIndex);
+
+  const tasks = getCourseTasks(day, courseIndex);
+  const progress = getCourseProgress(day, courseIndex);
+  currentTaskIndex = progress.taskIndex;
+  timerTotalDuration = progress.totalDuration;
+  timerTimeRemaining = progress.timeRemaining;
+  timerIsPaused = true;
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+
+  const done = currentTaskIndex >= tasks.length;
+  document.getElementById('btn-start').disabled = done;
+  document.getElementById('btn-pause').disabled = true;
+
+  renderCourseDetail(day, courseIndex);
 }
+
+function backToCourseList() {
+  if (currentCourseIndex !== null) {
+    if (!timerIsPaused) pauseTimer();
+    else saveCourseProgress(currentDay, currentCourseIndex);
+  }
+  currentCourseIndex = null;
+  localStorage.removeItem(`pomodoro_open_course_${currentDay}`);
+  renderCourseList(currentDay);
+}
+
+function switchTab(day) {
+  if (currentCourseIndex !== null) {
+    if (!timerIsPaused) pauseTimer();
+    else saveCourseProgress(currentDay, currentCourseIndex);
+  }
+  currentCourseIndex = null;
+  currentDay = day;
+
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-slate-900', 'text-white', 'active-tab'));
+  document.getElementById(`tab-${day}`).classList.add('bg-slate-900', 'text-white', 'active-tab');
+  document.getElementById('day-title').innerText = day;
+
+  const openIdx = localStorage.getItem(`pomodoro_open_course_${day}`);
+  if (openIdx !== null && scheduleData[day][parseInt(openIdx, 10)]) {
+    openCourse(day, parseInt(openIdx, 10));
+  } else {
+    renderCourseList(day);
+  }
+}
+
+// ── Cronómetro ────────────────────────────────────────────────────────────────
 
 function setTimer(minutes) {
   clearInterval(timerInterval);
@@ -281,6 +353,13 @@ function updateTimerDisplay() {
   document.getElementById('timer-progress').style.width = `${(timerTimeRemaining / timerTotalDuration) * 100}%`;
 }
 
+function startManualBreak(minutes, label) {
+  if (currentCourseIndex !== null && !timerIsPaused) pauseTimer();
+  timerMode = 'manual';
+  manualBreakLabel = label;
+  setTimer(minutes);
+}
+
 function startTimer() {
   const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
   const hoy = dias[new Date().getDay()];
@@ -288,24 +367,32 @@ function startTimer() {
     document.getElementById('day-error-modal').classList.remove('opacity-0', 'pointer-events-none');
     return;
   }
+  if (timerMode === 'course') {
+    if (currentCourseIndex === null) return;
+    const tasks = getCourseTasks(currentDay, currentCourseIndex);
+    if (currentTaskIndex >= tasks.length) return;
+  }
   if (!timerIsPaused) return;
-  clearInterval(timerInterval);
+
   timerIsPaused = false;
   document.getElementById('btn-start').disabled = true;
   document.getElementById('btn-pause').disabled = false;
+
   timerInterval = setInterval(() => {
     if (timerTimeRemaining > 0) {
       timerTimeRemaining--;
       updateTimerDisplay();
-      saveTimerState();
+      if (timerMode === 'course' && currentCourseIndex !== null) {
+        saveCourseProgress(currentDay, currentCourseIndex);
+      }
       if (timerTimeRemaining === 0) {
         clearInterval(timerInterval);
         timerIsPaused = true;
         document.getElementById('btn-start').disabled = false;
         document.getElementById('btn-pause').disabled = true;
-        clearTimerState();
-        startAlarmLoop(scheduleData[currentDay][currentTaskIndex].type);
-        showAlarmModal(scheduleData[currentDay][currentTaskIndex]);
+        const soundType = timerMode === 'manual' ? 'rest' : getCourseTasks(currentDay, currentCourseIndex)[currentTaskIndex].type;
+        startAlarmLoop(soundType);
+        showAlarmModal();
       }
     }
   }, 1000);
@@ -316,40 +403,101 @@ function pauseTimer() {
   timerIsPaused = true;
   document.getElementById('btn-start').disabled = false;
   document.getElementById('btn-pause').disabled = true;
-  saveTimerState();
+  if (timerMode === 'course' && currentCourseIndex !== null) {
+    saveCourseProgress(currentDay, currentCourseIndex);
+  }
 }
 
 function resetTimer() {
-  pauseTimer();
+  clearInterval(timerInterval);
+  timerIsPaused = true;
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-pause').disabled = true;
   timerTimeRemaining = timerTotalDuration;
   updateTimerDisplay();
-  clearTimerState();
+  if (timerMode === 'course' && currentCourseIndex !== null) {
+    saveCourseProgress(currentDay, currentCourseIndex);
+  }
 }
 
-function showAlarmModal(task) {
-  document.getElementById('modal-alarm-message').innerText = "Tu bloque ha finalizado.";
+function showAlarmModal() {
+  let msg;
+  if (timerMode === 'manual') {
+    msg = `Tu ${manualBreakLabel.toLowerCase()} ha finalizado.`;
+  } else {
+    const tasks = getCourseTasks(currentDay, currentCourseIndex);
+    const isLastOfCourse = currentTaskIndex + 1 >= tasks.length;
+    msg = isLastOfCourse ? '¡Has completado este curso! 🎉' : 'Tu bloque ha finalizado.';
+  }
+  document.getElementById('modal-alarm-message').innerText = msg;
   document.getElementById('custom-alarm-modal').classList.remove('opacity-0', 'pointer-events-none');
 }
 
 function dismissAlarmAndContinue() {
   stopAlarmLoop();
   document.getElementById('custom-alarm-modal').classList.add('opacity-0', 'pointer-events-none');
-  if (currentTaskIndex + 1 < scheduleData[currentDay].length) {
+
+  if (timerMode === 'manual') {
+    timerMode = 'course';
+    if (currentCourseIndex !== null) {
+      const progress = getCourseProgress(currentDay, currentCourseIndex);
+      const tasks = getCourseTasks(currentDay, currentCourseIndex);
+      currentTaskIndex = progress.taskIndex;
+      timerTotalDuration = progress.totalDuration;
+      timerTimeRemaining = progress.timeRemaining;
+      document.getElementById('btn-start').disabled = currentTaskIndex >= tasks.length;
+    } else {
+      timerTotalDuration = 1500;
+      timerTimeRemaining = 1500;
+      document.getElementById('btn-start').disabled = false;
+    }
+    document.getElementById('btn-pause').disabled = true;
+    updateTimerDisplay();
+    return;
+  }
+
+  const tasks = getCourseTasks(currentDay, currentCourseIndex);
+  if (currentTaskIndex + 1 < tasks.length) {
     currentTaskIndex++;
-    localStorage.setItem(`pomodoro_task_index_${currentDay}`, currentTaskIndex);
-    selectTask(currentDay, currentTaskIndex);
+    const item = tasks[currentTaskIndex];
+    timerTotalDuration = item.duration * 60;
+    timerTimeRemaining = timerTotalDuration;
+    saveCourseProgress(currentDay, currentCourseIndex);
+    updateTimerDisplay();
+    document.getElementById('btn-start').disabled = false;
+    document.getElementById('btn-pause').disabled = true;
+    renderCourseDetail(currentDay, currentCourseIndex);
+  } else {
+    currentTaskIndex = tasks.length;
+    saveCourseProgress(currentDay, currentCourseIndex);
+    localStorage.removeItem(`pomodoro_open_course_${currentDay}`);
+    currentCourseIndex = null;
+    renderCourseList(currentDay);
   }
 }
 
 function toggleCheck(key, e) {
   e.stopPropagation();
   localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true');
-  renderTimeline(currentDay);
+  renderCurrentView();
 }
 
 function resetDayCheckboxes() {
-  scheduleData[currentDay].forEach((_, i) => localStorage.removeItem(`${currentDay}-${i}`));
-  renderTimeline(currentDay);
+  clearInterval(timerInterval);
+  scheduleData[currentDay].forEach((course, idx) => {
+    localStorage.removeItem(`pomodoro_progress_${currentDay}_${idx}`);
+    buildCourseTasks(course).forEach((_, tIdx) => localStorage.removeItem(`${currentDay}-${idx}-${tIdx}`));
+  });
+  localStorage.removeItem(`pomodoro_open_course_${currentDay}`);
+  currentCourseIndex = null;
+  timerMode = 'course';
+  timerIsPaused = true;
+  timerTimeRemaining = 1500;
+  timerTotalDuration = 1500;
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-pause').disabled = true;
+  updateTimerDisplay();
+  renderCourseList(currentDay);
 }
 
 function toggleTheme() {
@@ -359,48 +507,28 @@ function toggleTheme() {
   knob.style.transform = isDark ? 'translateX(24px)' : 'translateX(0)';
   toggle.style.backgroundColor = isDark ? '#6366f1' : '';
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  renderTimeline(currentDay);
-}
-
-
-// ── Persistencia del cronómetro ──────────────────────────────────────────────
-
-function saveTimerState() {
-  localStorage.setItem('pomodoro_timer_state', JSON.stringify({
-    day: currentDay,
-    taskIndex: currentTaskIndex,
-    timeRemaining: timerTimeRemaining,
-    totalDuration: timerTotalDuration,
-    savedAt: Date.now()
-  }));
-}
-
-function loadTimerState() {
-  try { return JSON.parse(localStorage.getItem('pomodoro_timer_state')); }
-  catch (e) { return null; }
-}
-
-function clearTimerState() {
-  localStorage.removeItem('pomodoro_timer_state');
+  renderCurrentView();
 }
 
 // ── Detección de cambio de día ────────────────────────────────────────────────
 
 function getTodayKey() {
   const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 function checkAndResetIfNewDay() {
   const lastDate = localStorage.getItem('pomodoro_last_date');
   const today = getTodayKey();
   if (lastDate && lastDate !== today) {
-    const dias = ['lunes','martes','miercoles','jueves','viernes','sabado'];
+    const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
     dias.forEach(dia => {
-      localStorage.removeItem(`pomodoro_task_index_${dia}`);
-      (scheduleData[dia] || []).forEach((_, i) => localStorage.removeItem(`${dia}-${i}`));
+      (scheduleData[dia] || []).forEach((course, idx) => {
+        localStorage.removeItem(`pomodoro_progress_${dia}_${idx}`);
+        buildCourseTasks(course).forEach((_, tIdx) => localStorage.removeItem(`${dia}-${idx}-${tIdx}`));
+      });
+      localStorage.removeItem(`pomodoro_open_course_${dia}`);
     });
-    clearTimerState();
   }
   localStorage.setItem('pomodoro_last_date', today);
 }
@@ -424,17 +552,5 @@ window.onload = () => {
   } else {
     const todayName = dias[hoyIdx];
     switchTab(todayName);
-
-    const saved = loadTimerState();
-    if (saved && saved.day === todayName) {
-      currentTaskIndex = saved.taskIndex;
-      timerTotalDuration = saved.totalDuration;
-      timerTimeRemaining = saved.timeRemaining;
-      timerIsPaused = true;
-      updateTimerDisplay();
-      document.getElementById('btn-start').disabled = false;
-      document.getElementById('btn-pause').disabled = true;
-      renderTimeline(todayName);
-    }
   }
 };

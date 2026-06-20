@@ -28,6 +28,20 @@ body {
   border-radius: 3px;
 }
 
+/* Línea vertical de la timeline: solo aparece dentro de la vista de un curso */
+#timeline-list.timeline-line::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  background-color: #f1f5f9;
+}
+body.dark #timeline-list.timeline-line::before {
+  background-color: #1e293b;
+}
+
 /* ── DARK MODE ── */
 body.dark {
   background-color: #0f172a;
