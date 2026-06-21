@@ -46,6 +46,7 @@ let timerIsPaused = true;
 let soundLoopInterval = null;
 let timerMode = 'course';        // 'course' | 'manual' (descanso/cena manual)
 let manualBreakLabel = '';
+let allowAnyDay = false;         // true cuando se "activa el horario" un domingo para recuperar un pomodoro
 
 // ── Construcción de tareas de un curso (pomodoros + descansos cortos) ────────
 
@@ -202,12 +203,24 @@ function renderCourseList(day) {
     container.appendChild(card);
   });
 
-  const breakBtn = document.createElement('button');
-  breakBtn.type = 'button';
-  breakBtn.onclick = () => startManualBreak(30, 'Cena');
-  breakBtn.className = 'w-full mt-2 py-3 rounded-xl border border-dashed border-slate-200 text-slate-500 text-xs font-semibold hover:border-slate-300 hover:text-slate-700 transition-colors duration-150 flex items-center justify-center gap-2';
-  breakBtn.innerHTML = `🍽️ Tomar un descanso para cenar (30 min)`;
-  container.appendChild(breakBtn);
+  const breaksWrap = document.createElement('div');
+  breaksWrap.className = 'flex gap-2 mt-2';
+
+  const shortBreakBtn = document.createElement('button');
+  shortBreakBtn.type = 'button';
+  shortBreakBtn.onclick = () => startManualBreak(15, 'Descanso');
+  shortBreakBtn.className = 'flex-1 py-3 rounded-xl border border-dashed border-slate-200 text-slate-500 text-xs font-semibold hover:border-slate-300 hover:text-slate-700 transition-colors duration-150 flex items-center justify-center gap-2';
+  shortBreakBtn.innerHTML = `Desc. 15`;
+  breaksWrap.appendChild(shortBreakBtn);
+
+  const dinnerBtn = document.createElement('button');
+  dinnerBtn.type = 'button';
+  dinnerBtn.onclick = () => startManualBreak(30, 'Cena');
+  dinnerBtn.className = 'flex-1 py-3 rounded-xl border border-dashed border-slate-200 text-slate-500 text-xs font-semibold hover:border-slate-300 hover:text-slate-700 transition-colors duration-150 flex items-center justify-center gap-2';
+  dinnerBtn.innerHTML = `Desc. 30`;
+  breaksWrap.appendChild(dinnerBtn);
+
+  container.appendChild(breaksWrap);
 }
 
 // ── Render: detalle de un curso (su propia mini-timeline) ────────────────────
@@ -242,6 +255,17 @@ function renderCourseDetail(day, courseIndex) {
 
     if (item.type === 'course') {
       const lc = levelClasses(item.level);
+      const justFinished = isActive && timerMode === 'course' && timerTimeRemaining === 0;
+      let boxColor;
+      if (justFinished || isPast) {
+        boxColor = 'bg-emerald-50 border-emerald-100 text-emerald-800';
+      } else if (isActive) {
+        boxColor = 'bg-rose-50 border-rose-100 text-rose-800';
+      } else {
+        boxColor = 'bg-slate-50 border-slate-200 text-slate-500';
+      }
+      const ringClass = isActive ? 'ring-2 ring-slate-900 shadow-md' : '';
+      const lockOpacity = (!isActive && !isPast) ? 'opacity-60' : '';
       row.innerHTML = `
         <div class="z-10 mt-1.5 flex-shrink-0">
           <button onclick="toggleCheck('${taskKey}', event)" ${!isActive && !isPast ? 'disabled' : ''}
@@ -249,7 +273,7 @@ function renderCourseDetail(day, courseIndex) {
             <svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m4.5 12.75 6 6 9-13.5"/></svg>
           </button>
         </div>
-        <div class="flex-1 border p-4 rounded-xl shadow-sm ${lc.box} ${stateClass}">
+        <div class="flex-1 border p-4 rounded-xl shadow-sm transition-colors duration-500 ${boxColor} ${ringClass} ${lockOpacity}">
           <div class="flex justify-between items-start gap-2 mb-1">
             <h4 class="font-bold text-base">${item.subject}</h4>
             <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${lc.badge}">${item.level}</span>
@@ -334,6 +358,15 @@ function switchTab(day) {
   }
 }
 
+// Domingo es día de descanso por defecto, pero esto permite entrar de todas
+// formas a elegir un curso (por ejemplo, para recuperar un pomodoro que quedó pendiente).
+function activateScheduleOnSunday() {
+  allowAnyDay = true;
+  document.getElementById('sunday-view').classList.add('hidden');
+  document.getElementById('main-content').classList.remove('hidden');
+  switchTab('sabado');
+}
+
 // ── Cronómetro ────────────────────────────────────────────────────────────────
 
 function setTimer(minutes) {
@@ -363,7 +396,7 @@ function startManualBreak(minutes, label) {
 function startTimer() {
   const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
   const hoy = dias[new Date().getDay()];
-  if (currentDay !== hoy) {
+  if (!allowAnyDay && currentDay !== hoy) {
     document.getElementById('day-error-modal').classList.remove('opacity-0', 'pointer-events-none');
     return;
   }
@@ -391,6 +424,9 @@ function startTimer() {
         document.getElementById('btn-start').disabled = false;
         document.getElementById('btn-pause').disabled = true;
         const soundType = timerMode === 'manual' ? 'rest' : getCourseTasks(currentDay, currentCourseIndex)[currentTaskIndex].type;
+        if (timerMode === 'course' && currentCourseIndex !== null) {
+          renderCourseDetail(currentDay, currentCourseIndex);
+        }
         startAlarmLoop(soundType);
         showAlarmModal();
       }

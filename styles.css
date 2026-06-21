@@ -7,11 +7,22 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+#timer-stage {
+  container-type: inline-size;
+  width: 100%;
+}
+
 .timer-font {
   font-family: 'DS-DIGIB', monospace;
   font-size: clamp(8rem, 22vw, 18rem);
   font-weight: 900;
   -webkit-text-stroke: 2px currentColor;
+}
+
+@media (max-width: 480px) {
+  .timer-font {
+    font-size: clamp(4.5rem, 34cqw, 12rem);
+  }
 }
 
 .custom-scrollbar::-webkit-scrollbar {
