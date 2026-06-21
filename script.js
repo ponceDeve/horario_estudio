@@ -456,21 +456,68 @@ function resetTimer() {
   }
 }
 
+// ── Voz: lee en voz alta los mensajes de los modales ──────────────────────────
+
+function speak(text) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
+    utterance.rate = 1.02;
+    window.speechSynthesis.speak(utterance);
+  } catch (e) {}
+}
+
+// Frases cortas que rotan al azar cada vez que terminas un pomodoro de estudio
+const POMODORO_REWARD_MESSAGES = [
+  "Uno menos, seguimos",
+  "25 minutos bien invertidos",
+  "Tu yo del futuro te lo agradece",
+  "Otra neurona puesta a trabajar",
+  "Eso ya no te lo quita nadie",
+  "Vas pisando fuerte"
+];
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function showAlarmModal() {
   let msg;
   if (timerMode === 'manual') {
     msg = `Tu ${manualBreakLabel.toLowerCase()} ha finalizado.`;
   } else {
     const tasks = getCourseTasks(currentDay, currentCourseIndex);
-    const isLastOfCourse = currentTaskIndex + 1 >= tasks.length;
-    msg = isLastOfCourse ? '¡Has completado este curso! 🎉' : 'Tu bloque ha finalizado.';
+    const finishedItem = tasks[currentTaskIndex];
+    if (finishedItem && finishedItem.type === 'course') {
+      msg = pickRandom(POMODORO_REWARD_MESSAGES);
+    } else {
+      msg = 'Tu descanso terminó, ¡seguimos!';
+    }
   }
   document.getElementById('modal-alarm-message').innerText = msg;
   document.getElementById('custom-alarm-modal').classList.remove('opacity-0', 'pointer-events-none');
+  speak(msg);
+}
+
+function showCourseCompleteModal(subject) {
+  const subtitle = `Completaste el curso de ${subject}`;
+  document.getElementById('course-complete-subject').innerText = subtitle;
+  document.getElementById('course-complete-modal').classList.remove('opacity-0', 'pointer-events-none');
+  speak(`¡Felicidades! ${subtitle}. Así es como entran a la UNMSM: curso por curso.`);
+}
+
+function closeCourseCompleteModal() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  document.getElementById('course-complete-modal').classList.add('opacity-0', 'pointer-events-none');
+  currentCourseIndex = null;
+  renderCourseList(currentDay);
 }
 
 function dismissAlarmAndContinue() {
   stopAlarmLoop();
+  window.speechSynthesis && window.speechSynthesis.cancel();
   document.getElementById('custom-alarm-modal').classList.add('opacity-0', 'pointer-events-none');
 
   if (timerMode === 'manual') {
@@ -507,8 +554,8 @@ function dismissAlarmAndContinue() {
     currentTaskIndex = tasks.length;
     saveCourseProgress(currentDay, currentCourseIndex);
     localStorage.removeItem(`pomodoro_open_course_${currentDay}`);
-    currentCourseIndex = null;
-    renderCourseList(currentDay);
+    const finishedSubject = scheduleData[currentDay][currentCourseIndex].subject;
+    showCourseCompleteModal(finishedSubject);
   }
 }
 
