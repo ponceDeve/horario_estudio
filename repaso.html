@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Repasos - Repetición Espaciada</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased">
+
+  <!-- Toggle dark/light mode -->
+  <div class="fixed top-4 left-4 z-[200] flex items-center gap-2">
+    <i class="bi bi-sun-fill text-slate-400 text-sm"></i>
+    <button id="theme-toggle" onclick="toggleTheme()" class="relative w-12 h-6 rounded-full bg-slate-300 transition-colors duration-300 focus:outline-none">
+      <span id="theme-knob" class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300"></span>
+    </button>
+    <i class="bi bi-moon-fill text-slate-400 text-sm"></i>
+  </div>
+
+  <!-- Link volver -->
+  <div class="fixed top-4 right-4 z-[200]">
+    <a href="index.html" rel="noopener" class="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors duration-150">
+      <i class="bi bi-arrow-left"></i> Volver al cronograma
+    </a>
+  </div>
+
+  <main class="max-w-3xl mx-auto px-4 py-16 sm:py-20">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-black text-slate-900">Repasos de hoy</h1>
+      <p id="fecha-hoy" class="text-sm text-slate-400 mt-1"></p>
+    </div>
+
+    <!-- Tarjetas de hoy -->
+    <section class="mb-10">
+      <div id="repasos-hoy" class="flex flex-col gap-3"></div>
+      <div id="sin-repasos" class="hidden text-center py-16">
+        <div class="text-5xl mb-4">🎉</div>
+        <p class="font-bold text-slate-900 text-lg">No tienes repasos pendientes hoy</p>
+        <p class="text-slate-400 text-sm mt-1">Vuelve mañana o completa más cursos en el cronograma</p>
+      </div>
+    </section>
+
+    <!-- Próximos repasos -->
+    <section>
+      <h2 class="text-base font-bold text-slate-900 mb-3">Próximos repasos</h2>
+      <div id="proximos-repasos" class="flex flex-col gap-2"></div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: ingresar tema al completar curso -->
+  <div id="modal-tema" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">¿Qué tema viste?</h3>
+      <p id="modal-tema-curso" class="text-sm text-slate-400 mb-4"></p>
+      <input id="input-tema" type="text" placeholder="Ej: Fracciones, Segunda Guerra Mundial..." 
+        class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 mb-4 bg-white">
+      <div class="flex gap-2">
+        <button onclick="cancelarTema()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition">Omitir</button>
+        <button onclick="guardarTema()" class="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 transition">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="repaso.js"></script>
+</body>
+
+</html>

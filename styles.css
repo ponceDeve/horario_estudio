@@ -117,3 +117,40 @@ body.dark .text-rose-800     { color: #fda4af !important; }
 /* Checkbox */
 body.dark .bg-white.border-slate-200       { background-color: #1e293b !important; border-color: #475569 !important; }
 body.dark .bg-slate-900.border-slate-900   { background-color: #f1f5f9 !important; border-color: #f1f5f9 !important; color: #0f172a !important; }
+
+/* ── Theme toggle: estados dark/light sin estilos inline ── */
+#theme-knob {
+  transform: translateX(0);
+  transition: transform 0.3s;
+}
+#theme-knob.theme-knob-dark {
+  transform: translateX(24px);
+}
+#theme-toggle.theme-toggle-dark {
+  background-color: #6366f1;
+}
+
+/* ── Barra de progreso de cursos: ancho vía atributo data-pct ── */
+.course-progress-bar { width: 0%; }
+.course-progress-bar[data-pct="0"]   { width: 0%; }
+.course-progress-bar[data-pct="25"]  { width: 25%; }
+.course-progress-bar[data-pct="50"]  { width: 50%; }
+.course-progress-bar[data-pct="75"]  { width: 75%; }
+.course-progress-bar[data-pct="100"] { width: 100%; }
+
+/* ── Botón de repasos: siempre letra blanca independiente del modo ── */
+body .btn-repasos,
+body.dark .btn-repasos {
+  color: #ffffff !important;
+}
+.sunday-icon {
+  color: rgb(105, 23, 143);
+}
+
+/* ── Barra de progreso del timer (ancho dinámico via CSS custom property) ── */
+.timer-progress-full {
+  width: 100%;
+}
+#timer-progress {
+  width: var(--timer-pct, 100%);
+}

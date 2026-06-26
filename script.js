@@ -1,37 +1,7 @@
 // ── Datos: ahora cada día solo define SUS CURSOS (sin horario fijo) ──────────
 // El orden en que se estudian ya no importa: el usuario elige el curso que quiere.
 // Dentro de cada curso, los pomodoros sí siguen en orden con descansos cortos.
-const scheduleData = {
-  lunes: [
-    { subject: "Aritmética", level: "hard", pomodoros: 4 },
-    { subject: "Razonamiento Verbal", level: "medium", pomodoros: 2 },
-    { subject: "Economía", level: "easy", pomodoros: 3 }
-  ],
-  martes: [
-    { subject: "Geografía", level: "medium", pomodoros: 3 },
-    { subject: "Trigonometría", level: "hard", pomodoros: 4 },
-    { subject: "Razonamiento Matemático", level: "easy", pomodoros: 2 }
-  ],
-  miercoles: [
-    { subject: "Educación Cívica", level: "medium", pomodoros: 2 },
-    { subject: "Historia", level: "easy", pomodoros: 3 },
-    { subject: "Geometría", level: "hard", pomodoros: 4 }
-  ],
-  jueves: [
-    { subject: "Literatura", level: "easy", pomodoros: 2 },
-    { subject: "Química", level: "hard", pomodoros: 4 }
-  ],
-  viernes: [
-    { subject: "Física", level: "hard", pomodoros: 4 },
-    { subject: "Filosofía", level: "medium", pomodoros: 2 },
-    { subject: "Biología", level: "easy", pomodoros: 3 }
-  ],
-  sabado: [
-    { subject: "Lenguaje", level: "easy", pomodoros: 3 },
-    { subject: "Álgebra", level: "hard", pomodoros: 4 },
-    { subject: "Psicología", level: "medium", pomodoros: 2 }
-  ]
-};
+// scheduleData y REPASO_INTERVALOS vienen de data.js
 
 const POMODORO_MIN = 25;
 const REST_MIN = 5;
@@ -181,12 +151,12 @@ function renderCourseList(day) {
 
     const card = document.createElement('div');
     card.onclick = () => openCourse(day, idx);
-    card.className = `cursor-pointer border border-slate-200 rounded-xl p-4 transition-all duration-150 hover:shadow-md hover:border-slate-300 ${done ? 'opacity-70' : ''}`;
+    card.className = `cursor-pointer border border-slate-200 rounded-xl p-3 transition-all duration-150 hover:shadow-md hover:border-slate-300 ${done ? 'opacity-70' : ''}`;
     card.innerHTML = `
       <div class="flex justify-between items-start gap-2 mb-3">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${lc.badge}">${course.level}</span>
-          <h4 class="font-bold text-slate-900 text-base">${course.subject}</h4>
+          <span class="text-[10px] font-medium text-white px-2 py-0.5 rounded-md ${lc.badge}">${course.level}</span>
+          <h4 class="font-medium text-slate-900 text-sm">${course.subject}</h4>
         </div>
         ${done
           ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-emerald-500 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>`
@@ -194,12 +164,13 @@ function renderCourseList(day) {
       </div>
       <div class="flex items-center gap-3">
         <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-          <div class="h-full ${lc.badge} rounded-full transition-all duration-300" style="width:${pct}%"></div>
+          <div class="course-progress-bar h-full ${lc.badge} rounded-full transition-all duration-300"></div>
         </div>
         <span class="text-[11px] font-semibold text-slate-500 whitespace-nowrap">${completedPomodoros}/${course.pomodoros} 🍅</span>
       </div>
       <p class="text-[11px] text-slate-400 mt-2">${statusText}</p>
     `;
+    card.querySelector('.course-progress-bar').setAttribute('data-pct', pct);
     container.appendChild(card);
   });
 
@@ -208,9 +179,9 @@ function renderCourseList(day) {
 
   const shortBreakBtn = document.createElement('button');
   shortBreakBtn.type = 'button';
-  shortBreakBtn.onclick = () => startManualBreak(15, 'Descanso');
+  shortBreakBtn.onclick = () => startManualBreak(10, 'Descanso');
   shortBreakBtn.className = 'flex-1 py-3 rounded-xl border border-dashed border-slate-200 text-slate-500 text-xs font-semibold hover:border-slate-300 hover:text-slate-700 transition-colors duration-150 flex items-center justify-center gap-2';
-  shortBreakBtn.innerHTML = `Desc. 15`;
+  shortBreakBtn.innerHTML = `Desc. 10`;
   breaksWrap.appendChild(shortBreakBtn);
 
   const dinnerBtn = document.createElement('button');
@@ -273,18 +244,18 @@ function renderCourseDetail(day, courseIndex) {
             <svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m4.5 12.75 6 6 9-13.5"/></svg>
           </button>
         </div>
-        <div class="flex-1 border p-4 rounded-xl shadow-sm transition-colors duration-500 ${boxColor} ${ringClass} ${lockOpacity}">
+        <div class="flex-1 border p-3 rounded-xl shadow-sm transition-colors duration-500 ${boxColor} ${ringClass} ${lockOpacity}">
           <div class="flex justify-between items-start gap-2 mb-1">
-            <h4 class="font-bold text-base">${item.subject}</h4>
-            <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-md ${lc.badge}">${item.level}</span>
+            <h4 class="font-medium text-sm">${item.subject}</h4>
+            <span class="text-[10px] font-medium text-white px-2 py-0.5 rounded-md ${lc.badge}">${item.level}</span>
           </div>
           <p class="text-xs opacity-75">${item.detail}</p>
         </div>`;
     } else {
       row.innerHTML = `
         <div class="z-10 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs flex-shrink-0">☕</div>
-        <div class="flex-1 border bg-slate-50 border-slate-200 text-slate-700 p-3 rounded-xl ${stateClass}">
-          <span class="font-bold text-sm">Descanso (${item.duration} min)</span>
+        <div class="flex-1 border bg-slate-50 border-slate-200 text-slate-700 p-2.5 rounded-xl ${stateClass}">
+          <span class="font-medium text-xs">Descanso (${item.duration} min)</span>
         </div>`;
     }
     container.appendChild(row);
@@ -383,7 +354,7 @@ function updateTimerDisplay() {
   const mins = Math.floor(timerTimeRemaining / 60);
   const secs = timerTimeRemaining % 60;
   document.getElementById('timer-display').innerText = `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
-  document.getElementById('timer-progress').style.width = `${(timerTimeRemaining / timerTotalDuration) * 100}%`;
+  document.getElementById('timer-progress').style.setProperty('--timer-pct', `${(timerTimeRemaining / timerTotalDuration) * 100}%`);
 }
 
 function startManualBreak(minutes, label) {
@@ -501,18 +472,28 @@ function showAlarmModal() {
   speak(msg);
 }
 
-function showCourseCompleteModal(subject) {
+function showCourseCompleteModal(subject, day, level) {
   const subtitle = `Completaste el curso de ${subject}`;
   document.getElementById('course-complete-subject').innerText = subtitle;
   document.getElementById('course-complete-modal').classList.remove('opacity-0', 'pointer-events-none');
   speak(`¡Felicidades! ${subtitle}. Así es como entran a la UNMSM: curso por curso.`);
+  // Guardar en localStorage para repetición espaciada
+  _pendingRepasoData = { subject, day, level };
 }
+
+let _pendingRepasoData = null;
 
 function closeCourseCompleteModal() {
   window.speechSynthesis && window.speechSynthesis.cancel();
   document.getElementById('course-complete-modal').classList.add('opacity-0', 'pointer-events-none');
   currentCourseIndex = null;
   renderCourseList(currentDay);
+  // Abrir modal de tema para repetición espaciada
+  if (_pendingRepasoData) {
+    const { subject, day, level } = _pendingRepasoData;
+    _pendingRepasoData = null;
+    openTemaModal(subject, day, level);
+  }
 }
 
 function dismissAlarmAndContinue() {
@@ -555,7 +536,8 @@ function dismissAlarmAndContinue() {
     saveCourseProgress(currentDay, currentCourseIndex);
     localStorage.removeItem(`pomodoro_open_course_${currentDay}`);
     const finishedSubject = scheduleData[currentDay][currentCourseIndex].subject;
-    showCourseCompleteModal(finishedSubject);
+    const finishedLevel = scheduleData[currentDay][currentCourseIndex].level;
+    showCourseCompleteModal(finishedSubject, currentDay, finishedLevel);
   }
 }
 
@@ -587,8 +569,8 @@ function toggleTheme() {
   const isDark = document.body.classList.toggle('dark');
   const knob = document.getElementById('theme-knob');
   const toggle = document.getElementById('theme-toggle');
-  knob.style.transform = isDark ? 'translateX(24px)' : 'translateX(0)';
-  toggle.style.backgroundColor = isDark ? '#6366f1' : '';
+  knob.classList.toggle('theme-knob-dark', isDark);
+  toggle.classList.toggle('theme-toggle-dark', isDark);
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   renderCurrentView();
 }
@@ -616,8 +598,8 @@ function checkAndResetIfNewDay() {
   localStorage.setItem('pomodoro_last_date', today);
 }
 
+
 window.onload = () => {
-  window.scheduleData = scheduleData;
   checkAndResetIfNewDay();
 
   const hoyIdx = new Date().getDay();
@@ -625,8 +607,8 @@ window.onload = () => {
 
   if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark');
-    document.getElementById('theme-knob').style.transform = 'translateX(24px)';
-    document.getElementById('theme-toggle').style.backgroundColor = '#6366f1';
+    document.getElementById('theme-knob').classList.add('theme-knob-dark');
+    document.getElementById('theme-toggle').classList.add('theme-toggle-dark');
   }
 
   if (hoyIdx === 0) {
@@ -637,3 +619,46 @@ window.onload = () => {
     switchTab(todayName);
   }
 };
+
+// ── Modal de tema para repetición espaciada ───────────────────────────────────
+
+let _temaModalData = null;
+
+function openTemaModal(subject, day, level) {
+  _temaModalData = { subject, day, level };
+  document.getElementById('modal-tema-curso').textContent = `${subject} · ${day}`;
+  document.getElementById('input-tema').value = '';
+  document.getElementById('modal-tema').classList.remove('opacity-0', 'pointer-events-none');
+  setTimeout(() => document.getElementById('input-tema').focus(), 100);
+}
+
+function guardarTema() {
+  if (!_temaModalData) return;
+  const tema = document.getElementById('input-tema').value.trim();
+  registrarRepaso(_temaModalData.subject, _temaModalData.day, _temaModalData.level, tema);
+  cerrarTemaModal();
+}
+
+function cancelarTema() {
+  if (!_temaModalData) return;
+  registrarRepaso(_temaModalData.subject, _temaModalData.day, _temaModalData.level, '');
+  cerrarTemaModal();
+}
+
+function cerrarTemaModal() {
+  _temaModalData = null;
+  document.getElementById('modal-tema').classList.add('opacity-0', 'pointer-events-none');
+}
+
+function registrarRepaso(subject, day, level, tema) {
+  const hoy = getTodayKey();
+  let log = [];
+  try { log = JSON.parse(localStorage.getItem('repaso_log') || '[]'); } catch {}
+  const existe = log.find(e => e.subject === subject && e.day === day && e.fechaCompletado === hoy);
+  if (existe) {
+    if (tema) existe.tema = tema;
+  } else {
+    log.push({ subject, day, level, tema, fechaCompletado: hoy, repasosDone: [] });
+  }
+  localStorage.setItem('repaso_log', JSON.stringify(log));
+}
