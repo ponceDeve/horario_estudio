@@ -463,6 +463,11 @@ function showAlarmModal() {
     const finishedItem = tasks[currentTaskIndex];
     if (finishedItem && finishedItem.type === 'course') {
       msg = pickRandom(POMODORO_REWARD_MESSAGES);
+      // Solo en el primer pomodoro pedir el tema
+      if (currentTaskIndex === 0) {
+        const course = scheduleData[currentDay][currentCourseIndex];
+        setTimeout(() => openTemaModal(course.subject, currentDay, course.level), 400);
+      }
     } else {
       msg = 'Tu descanso terminó, ¡seguimos!';
     }
@@ -477,23 +482,13 @@ function showCourseCompleteModal(subject, day, level) {
   document.getElementById('course-complete-subject').innerText = subtitle;
   document.getElementById('course-complete-modal').classList.remove('opacity-0', 'pointer-events-none');
   speak(`¡Felicidades! ${subtitle}. Así es como entran a la UNMSM: curso por curso.`);
-  // Guardar en localStorage para repetición espaciada
-  _pendingRepasoData = { subject, day, level };
 }
-
-let _pendingRepasoData = null;
 
 function closeCourseCompleteModal() {
   window.speechSynthesis && window.speechSynthesis.cancel();
   document.getElementById('course-complete-modal').classList.add('opacity-0', 'pointer-events-none');
   currentCourseIndex = null;
   renderCourseList(currentDay);
-  // Abrir modal de tema para repetición espaciada
-  if (_pendingRepasoData) {
-    const { subject, day, level } = _pendingRepasoData;
-    _pendingRepasoData = null;
-    openTemaModal(subject, day, level);
-  }
 }
 
 function dismissAlarmAndContinue() {
