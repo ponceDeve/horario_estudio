@@ -13,16 +13,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
-
-  <!-- Toggle dark/light mode -->
-  <div class="fixed top-4 left-4 z-[200] flex items-center gap-2">
-    <i class="bi bi-sun-fill text-slate-400 text-sm"></i>
-    <button id="theme-toggle" onclick="toggleTheme()" class="relative w-12 h-6 rounded-full bg-slate-300 transition-colors duration-300 focus:outline-none">
-      <span id="theme-knob" class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300"></span>
-    </button>
-    <i class="bi bi-moon-fill text-slate-400 text-sm"></i>
-  </div>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased dark">
 
   <!-- VISTA DE DOMINGO -->
   <div id="sunday-view" class="fixed inset-0 z-[100] hidden bg-slate-50 flex items-center justify-center p-4 sm:p-6">

@@ -600,12 +600,6 @@ window.onload = () => {
   const hoyIdx = new Date().getDay();
   const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('theme-knob').classList.add('theme-knob-dark');
-    document.getElementById('theme-toggle').classList.add('theme-toggle-dark');
-  }
-
   if (hoyIdx === 0) {
     document.getElementById('sunday-view').classList.remove('hidden');
     document.getElementById('main-content').classList.add('hidden');
@@ -645,15 +639,21 @@ function cerrarTemaModal() {
   document.getElementById('modal-tema').classList.add('opacity-0', 'pointer-events-none');
 }
 
-function registrarRepaso(subject, day, level, tema) {
-  const hoy = getTodayKey();
-  let log = [];
-  try { log = JSON.parse(localStorage.getItem('repaso_log') || '[]'); } catch {}
-  const existe = log.find(e => e.subject === subject && e.day === day && e.fechaCompletado === hoy);
-  if (existe) {
-    if (tema) existe.tema = tema;
-  } else {
-    log.push({ subject, day, level, tema, fechaCompletado: hoy, repasosDone: [] });
+async function registrarRepaso(subject, day, level, tema) {
+  try {
+    await fetch('api.php?action=save_repaso', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subject,
+        day,
+        level,
+        tema,
+        fechaCompletado: getTodayKey(),
+        repasosDone: []
+      })
+    });
+  } catch(e) {
+    console.error('Error guardando repaso en BD:', e);
   }
-  localStorage.setItem('repaso_log', JSON.stringify(log));
 }
